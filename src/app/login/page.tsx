@@ -4,7 +4,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { useState, Suspense } from "react";
 import { useFormStatus } from "react-dom";
 import {
-  Moon,
+  FlaskConical,
   Sparkles,
   Mail,
   Lock,
@@ -17,10 +17,8 @@ import {
   Phone,
 } from "lucide-react";
 import { login, signup, signInWithOAuth } from "./actions";
-import StarField from "@/components/StarField";
 
 function OAuthButton({
-  provider,
   label,
   icon,
 }: {
@@ -33,10 +31,9 @@ function OAuthButton({
     <button
       type="submit"
       disabled={pending}
-      className="flex-1 flex items-center justify-center gap-2.5 py-2.5 px-4 rounded-xl
-        backdrop-blur-sm bg-white/5 border border-white/10
-        text-amber-100/70 text-sm font-medium
-        hover:bg-white/10 hover:border-white/20 hover:text-amber-100 hover:shadow-lg hover:shadow-amber-500/10
+      className="w-full flex items-center justify-center gap-2.5 py-2.5 px-4 rounded-full
+        bg-white border border-stone-200 text-stone-700 text-sm font-medium
+        hover:bg-stone-50 hover:border-amber-300 hover:text-amber-800 hover:shadow-sm
         disabled:opacity-50 disabled:cursor-not-allowed
         transition-all duration-300"
     >
@@ -52,20 +49,16 @@ function SubmitButton({ isLogin }: { isLogin: boolean }) {
     <button
       type="submit"
       disabled={pending}
-      className="w-full py-3 rounded-xl font-semibold text-sm tracking-widest
-        bg-gradient-to-r from-yellow-600 via-amber-500 to-yellow-600
-        hover:from-yellow-500 hover:via-amber-400 hover:to-yellow-500
-        text-[#0B1021] shadow-lg shadow-amber-500/20
-        hover:shadow-amber-400/40 hover:shadow-xl
-        hover:-translate-y-0.5
-        active:translate-y-0
+      className="w-full py-3 rounded-full font-semibold text-sm tracking-widest
+        bg-amber-100 border border-amber-300 text-amber-800
+        hover:bg-amber-200 hover:border-amber-400 hover:shadow-md hover:shadow-amber-100
+        hover:-translate-y-0.5 active:translate-y-0
         disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0
-        transition-all duration-300 ease-out
-        border border-amber-400/30"
+        transition-all duration-300 ease-out"
     >
       {pending ? (
         <span className="flex items-center justify-center gap-2">
-          <span className="w-4 h-4 border-2 border-[#0B1021]/40 border-t-[#0B1021] rounded-full animate-spin" />
+          <span className="w-4 h-4 border-2 border-amber-400/40 border-t-amber-700 rounded-full animate-spin" />
           處理中...
         </span>
       ) : isLogin ? (
@@ -97,61 +90,61 @@ function LoginForm() {
   };
 
   return (
-    <div className="relative min-h-screen bg-[#0B1021] flex flex-col items-center justify-center px-4 overflow-hidden">
-      {/* Star background */}
-      <StarField />
-
-      {/* Ambient glow orbs */}
+    <div className="relative min-h-screen bg-[#FDFBF7] flex flex-col items-center justify-center px-4 overflow-hidden">
+      {/* Ambient glow blobs matching AppShell */}
       <div className="pointer-events-none fixed inset-0 z-0">
-        <div className="absolute top-1/4 left-1/4 w-72 h-72 rounded-full bg-purple-900/25 blur-[100px]" />
-        <div className="absolute bottom-1/4 right-1/4 w-64 h-64 rounded-full bg-indigo-900/25 blur-[100px]" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full bg-blue-950/20 blur-[120px]" />
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full bg-rose-100/40 blur-[120px]" />
+        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full bg-amber-100/40 blur-[100px]" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-stone-100/60 blur-[120px]" />
       </div>
 
       {/* Back button */}
       <div className="relative z-10 w-full max-w-md mb-4">
         <button
           onClick={() => router.push("/")}
-          className="flex items-center gap-2 text-amber-300/60 hover:text-amber-300 transition-colors text-sm"
+          className="flex items-center gap-2 text-stone-400 hover:text-amber-700 transition-colors text-sm"
         >
           <ArrowLeft className="w-4 h-4" />
           返回首頁
         </button>
       </div>
 
-      {/* Glass card */}
+      {/* Card */}
       <div className="relative z-10 w-full max-w-md">
-        <div className="backdrop-blur-md bg-white/5 border border-white/10 rounded-2xl p-8 shadow-2xl shadow-black/40">
+        <div className="bg-white border border-stone-200 rounded-2xl p-8 shadow-sm relative overflow-hidden">
+          {/* Card glow bg */}
+          <div className="absolute inset-0 bg-gradient-to-br from-rose-50/60 via-transparent to-amber-50/60 rounded-2xl pointer-events-none" />
+
           {/* Logo & title */}
-          <div className="text-center mb-8">
+          <div className="relative text-center mb-8">
             <div className="flex items-center justify-center gap-2 mb-4">
               <div className="relative">
-                <Moon className="w-8 h-8 text-amber-400" />
-                <Sparkles className="absolute -top-1 -right-1 w-4 h-4 text-amber-300" />
+                <FlaskConical className="w-8 h-8 text-amber-700" />
+                <Sparkles className="absolute -top-1 -right-1 w-4 h-4 text-amber-500" />
               </div>
             </div>
-            <div className="flex items-center justify-center gap-3 mb-2 text-amber-400/60 text-xs tracking-widest">
+            <div className="flex items-center justify-center gap-3 mb-2 text-stone-400 text-xs tracking-widest">
               <span>✦</span>
               <span>SOULMATE SCENT</span>
               <span>✦</span>
             </div>
-            <h1 className="text-2xl font-bold text-amber-100 tracking-wide">
+            <h1 className="text-2xl font-bold text-stone-800 tracking-wide">
               {isLogin ? "歡迎回來" : "開啟你的香氣之旅"}
             </h1>
-            <p className="text-amber-100/40 text-sm mt-1">
+            <p className="text-stone-500 text-sm mt-1">
               {isLogin ? "登入以探索你的命定香氣" : "建立帳號，讓宇宙引領你"}
             </p>
           </div>
 
           {/* Mode toggle tabs */}
-          <div className="flex rounded-xl bg-white/5 border border-white/10 p-1 mb-6">
+          <div className="relative flex rounded-full bg-stone-100 border border-stone-200 p-1 mb-6">
             <button
               type="button"
               onClick={() => switchMode("login")}
-              className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-medium transition-all duration-300 ${
+              className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
                 isLogin
-                  ? "bg-amber-500/20 border border-amber-500/40 text-amber-300"
-                  : "text-amber-100/40 hover:text-amber-200"
+                  ? "bg-white border border-stone-200 text-amber-800 shadow-sm"
+                  : "text-stone-400 hover:text-stone-600"
               }`}
             >
               <LogIn className="w-3.5 h-3.5" />
@@ -160,10 +153,10 @@ function LoginForm() {
             <button
               type="button"
               onClick={() => switchMode("signup")}
-              className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-medium transition-all duration-300 ${
+              className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
                 !isLogin
-                  ? "bg-amber-500/20 border border-amber-500/40 text-amber-300"
-                  : "text-amber-100/40 hover:text-amber-200"
+                  ? "bg-white border border-stone-200 text-amber-800 shadow-sm"
+                  : "text-stone-400 hover:text-stone-600"
               }`}
             >
               <UserPlus className="w-3.5 h-3.5" />
@@ -173,11 +166,11 @@ function LoginForm() {
 
           {/* Error message */}
           {errorMessage && !successMessage && (
-            <div className="mb-5 px-4 py-3 rounded-xl bg-red-900/30 border border-red-500/40 flex items-start gap-2">
-              <span className="text-red-300 text-lg leading-none mt-0.5">
+            <div className="relative mb-5 px-4 py-3 rounded-xl bg-red-50 border border-red-200 flex items-start gap-2">
+              <span className="text-red-400 text-lg leading-none mt-0.5">
                 ⚠
               </span>
-              <p className="text-red-300 text-sm leading-relaxed">
+              <p className="text-red-600 text-sm leading-relaxed">
                 {errorMessage}
               </p>
             </div>
@@ -185,28 +178,28 @@ function LoginForm() {
 
           {/* Success message */}
           {successMessage && (
-            <div className="mb-5 px-4 py-3 rounded-xl bg-emerald-900/30 border border-emerald-500/40 flex items-start gap-2">
-              <span className="text-emerald-300 text-lg leading-none mt-0.5">
+            <div className="relative mb-5 px-4 py-3 rounded-xl bg-emerald-50 border border-emerald-200 flex items-start gap-2">
+              <span className="text-emerald-500 text-lg leading-none mt-0.5">
                 ✦
               </span>
-              <p className="text-emerald-300 text-sm leading-relaxed">
+              <p className="text-emerald-700 text-sm leading-relaxed">
                 {successMessage}
               </p>
             </div>
           )}
 
           {/* Form */}
-          <form action={isLogin ? login : signup} className="space-y-5">
+          <form action={isLogin ? login : signup} className="relative space-y-5">
             {/* Email */}
             <div className="space-y-1.5">
               <label
                 htmlFor="email"
-                className="block text-amber-200/70 text-xs tracking-widest uppercase"
+                className="block text-stone-500 text-xs tracking-widest uppercase"
               >
                 電子郵件
               </label>
               <div className="relative">
-                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-amber-400/50 pointer-events-none" />
+                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-amber-500/60 pointer-events-none" />
                 <input
                   id="email"
                   name="email"
@@ -214,8 +207,8 @@ function LoginForm() {
                   required
                   autoComplete="email"
                   placeholder="your@email.com"
-                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-black/30 border border-white/10 text-amber-100 placeholder-amber-100/25 text-sm
-                    focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/30
+                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-stone-50 border border-stone-200 text-stone-800 placeholder-stone-300 text-sm
+                    focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20
                     transition-all duration-200"
                 />
               </div>
@@ -225,12 +218,12 @@ function LoginForm() {
             <div className="space-y-1.5">
               <label
                 htmlFor="password"
-                className="block text-amber-200/70 text-xs tracking-widest uppercase"
+                className="block text-stone-500 text-xs tracking-widest uppercase"
               >
                 密碼
               </label>
               <div className="relative">
-                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-amber-400/50 pointer-events-none" />
+                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-amber-500/60 pointer-events-none" />
                 <input
                   id="password"
                   name="password"
@@ -241,14 +234,14 @@ function LoginForm() {
                     isLogin ? "輸入你的密碼" : "設定密碼（至少 6 個字元）"
                   }
                   minLength={6}
-                  className="w-full pl-10 pr-11 py-3 rounded-xl bg-black/30 border border-white/10 text-amber-100 placeholder-amber-100/25 text-sm
-                    focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/30
+                  className="w-full pl-10 pr-11 py-3 rounded-xl bg-stone-50 border border-stone-200 text-stone-800 placeholder-stone-300 text-sm
+                    focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20
                     transition-all duration-200"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword((v) => !v)}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-amber-400/40 hover:text-amber-300 transition-colors"
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-stone-400 hover:text-amber-600 transition-colors"
                   aria-label={showPassword ? "隱藏密碼" : "顯示密碼"}
                 >
                   {showPassword ? (
@@ -267,20 +260,20 @@ function LoginForm() {
                 <div className="space-y-1.5">
                   <label
                     htmlFor="nickname"
-                    className="block text-amber-200/70 text-xs tracking-widest uppercase"
+                    className="block text-stone-500 text-xs tracking-widest uppercase"
                   >
                     暱稱
                   </label>
                   <div className="relative">
-                    <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-amber-400/50 pointer-events-none" />
+                    <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-amber-500/60 pointer-events-none" />
                     <input
                       id="nickname"
                       name="nickname"
                       type="text"
                       autoComplete="nickname"
                       placeholder="你的暱稱（選填）"
-                      className="w-full pl-10 pr-4 py-3 rounded-xl bg-black/30 border border-white/10 text-amber-100 placeholder-amber-100/25 text-sm
-                        focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/30
+                      className="w-full pl-10 pr-4 py-3 rounded-xl bg-stone-50 border border-stone-200 text-stone-800 placeholder-stone-300 text-sm
+                        focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20
                         transition-all duration-200"
                     />
                   </div>
@@ -290,20 +283,20 @@ function LoginForm() {
                 <div className="space-y-1.5">
                   <label
                     htmlFor="phone"
-                    className="block text-amber-200/70 text-xs tracking-widest uppercase"
+                    className="block text-stone-500 text-xs tracking-widest uppercase"
                   >
                     手機號碼
                   </label>
                   <div className="relative">
-                    <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-amber-400/50 pointer-events-none" />
+                    <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-amber-500/60 pointer-events-none" />
                     <input
                       id="phone"
                       name="phone"
                       type="tel"
                       autoComplete="tel"
                       placeholder="+886 912 345 678（選填）"
-                      className="w-full pl-10 pr-4 py-3 rounded-xl bg-black/30 border border-white/10 text-amber-100 placeholder-amber-100/25 text-sm
-                        focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/30
+                      className="w-full pl-10 pr-4 py-3 rounded-xl bg-stone-50 border border-stone-200 text-stone-800 placeholder-stone-300 text-sm
+                        focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20
                         transition-all duration-200"
                     />
                   </div>
@@ -316,16 +309,16 @@ function LoginForm() {
           </form>
 
           {/* OAuth divider */}
-          <div className="flex items-center gap-3 my-6">
-            <div className="flex-1 h-px bg-white/10" />
-            <span className="text-amber-100/25 text-xs whitespace-nowrap">
+          <div className="relative flex items-center gap-3 my-6">
+            <div className="flex-1 h-px bg-stone-200" />
+            <span className="text-stone-400 text-xs whitespace-nowrap">
               或使用以下方式繼續
             </span>
-            <div className="flex-1 h-px bg-white/10" />
+            <div className="flex-1 h-px bg-stone-200" />
           </div>
 
           {/* OAuth buttons */}
-          <form action={signInWithOAuth.bind(null, "google")}>
+          <form action={signInWithOAuth.bind(null, "google")} className="relative">
             <OAuthButton
               provider="google"
               label="Google帳戶登入"
@@ -353,21 +346,21 @@ function LoginForm() {
           </form>
 
           {/* Divider */}
-          <div className="flex items-center gap-3 my-6">
-            <div className="flex-1 h-px bg-white/10" />
-            <span className="text-amber-400/40 text-xs">✦</span>
-            <div className="flex-1 h-px bg-white/10" />
+          <div className="relative flex items-center gap-3 my-6">
+            <div className="flex-1 h-px bg-stone-200" />
+            <span className="text-amber-500/50 text-xs">✦</span>
+            <div className="flex-1 h-px bg-stone-200" />
           </div>
 
           {/* Switch mode hint */}
-          <p className="text-center text-amber-100/40 text-xs">
+          <p className="relative text-center text-stone-400 text-xs">
             {isLogin ? (
               <>
                 還沒有帳號？{" "}
                 <button
                   type="button"
                   onClick={() => switchMode("signup")}
-                  className="text-amber-400 hover:text-amber-300 underline underline-offset-2 transition-colors"
+                  className="text-amber-700 hover:text-amber-600 underline underline-offset-2 transition-colors"
                 >
                   立即註冊
                 </button>
@@ -378,7 +371,7 @@ function LoginForm() {
                 <button
                   type="button"
                   onClick={() => switchMode("login")}
-                  className="text-amber-400 hover:text-amber-300 underline underline-offset-2 transition-colors"
+                  className="text-amber-700 hover:text-amber-600 underline underline-offset-2 transition-colors"
                 >
                   直接登入
                 </button>
@@ -388,7 +381,7 @@ function LoginForm() {
         </div>
 
         {/* Bottom tagline */}
-        <p className="text-center text-amber-500/30 text-xs mt-6 tracking-wider">
+        <p className="text-center text-stone-400 text-xs mt-6 tracking-wider">
           ✦ 命定香氣探索 · Soulmate Scent © 2026 ✦
         </p>
       </div>
@@ -400,8 +393,8 @@ export default function LoginPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-[#0B1021] flex items-center justify-center">
-          <div className="w-8 h-8 border-2 border-amber-400/40 border-t-amber-400 rounded-full animate-spin" />
+        <div className="min-h-screen bg-[#FDFBF7] flex items-center justify-center">
+          <div className="w-8 h-8 border-2 border-amber-300/40 border-t-amber-600 rounded-full animate-spin" />
         </div>
       }
     >

@@ -1,0 +1,14 @@
+[
+  { "id": "aries",       "name": "牡羊座", "symbol": "♈", "element": "火" },
+  { "id": "taurus",      "name": "金牛座", "symbol": "♉", "element": "土" },
+  { "id": "gemini",      "name": "雙子座", "symbol": "♊", "element": "風" },
+  { "id": "cancer",      "name": "巨蟹座", "symbol": "♋", "element": "水" },
+  { "id": "leo",         "name": "獅子座", "symbol": "♌", "element": "火" },
+  { "id": "virgo",       "name": "處女座", "symbol": "♍", "element": "土" },
+  { "id": "libra",       "name": "天秤座", "symbol": "♎", "element": "風" },
+  { "id": "scorpio",     "name": "天蝎座", "symbol": "♏", "element": "水" },
+  { "id": "sagittarius", "name": "射手座", "symbol": "♐", "element": "火" },
+  { "id": "capricorn",   "name": "摩羯座", "symbol": "♑", "element": "土" },
+  { "id": "aquarius",    "name": "水瓶座", "symbol": "♒", "element": "風" },
+  { "id": "pisces",      "name": "雙魚座", "symbol": "♓", "element": "水" }
+]

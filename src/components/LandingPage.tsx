@@ -57,9 +57,7 @@ export default function LandingPage({ onNavigateTarot }: LandingPageProps) {
         <p className="text-stone-500 text-lg mt-4 leading-relaxed">
           每一種香氣，都是宇宙為你書寫的密語
           <br />
-          <span className="text-amber-700">
-            透過塔羅牌，揭開你的香氛命運
-          </span>
+          <span className="text-amber-700">透過塔羅牌，揭開你的香氛命運</span>
         </p>
 
         {/* Decorative divider */}
@@ -75,9 +73,7 @@ export default function LandingPage({ onNavigateTarot }: LandingPageProps) {
         className="w-full max-w-xl fade-in-up"
         style={{ animationDelay: "0.2s" }}
       >
-        <div
-          className="bg-white rounded-2xl p-6 border border-stone-200 shadow-sm relative overflow-hidden"
-        >
+        <div className="bg-white rounded-2xl p-6 border border-stone-200 shadow-sm relative overflow-hidden">
           {/* Card glow bg */}
           <div className="absolute inset-0 bg-gradient-to-br from-rose-50/60 via-transparent to-amber-50/60 rounded-2xl pointer-events-none" />
 
@@ -113,9 +109,7 @@ export default function LandingPage({ onNavigateTarot }: LandingPageProps) {
               <div
                 key={i}
                 className={`h-1 rounded-full transition-all duration-300 ${
-                  i === phraseIndex
-                    ? "w-6 bg-amber-500"
-                    : "w-1.5 bg-stone-200"
+                  i === phraseIndex ? "w-6 bg-amber-500" : "w-1.5 bg-stone-200"
                 }`}
               />
             ))}
