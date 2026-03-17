@@ -1,8 +1,8 @@
 "use client";
 
-import { Sparkles, User, LogIn, LogOut, Moon } from "lucide-react";
+import { FlaskConical, User, LogIn, LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useTransition } from "react";
+import { useTransition } from "react";
 import type { Page } from "./AppShell";
 import type { User as SupabaseUser } from "@supabase/supabase-js";
 import { logout } from "@/app/login/actions";
@@ -18,22 +18,19 @@ export default function Navbar({ user, currentPage, onNavigate }: NavbarProps) {
   const [isPending, startTransition] = useTransition();
   const isLoggedIn = !!user;
   const navLinks: { label: string; page: Page }[] = [
-    { label: "✦ 首頁", page: "home" },
-    { label: "☽ 塔羅配對", page: "tarot" },
+    { label: "首頁", page: "home" },
+    { label: "🧬 配對分析", page: "tarot" },
   ];
   return (
-    <header className="sticky top-0 z-50 w-full glass-card border-b border-amber-500/20">
+    <header className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-md border-b border-stone-200/80 shadow-sm">
       <div className="max-w-6xl mx-auto flex items-center justify-between px-4 py-3">
         {/* Logo */}
         <button
           onClick={() => onNavigate("home")}
           className="flex items-center gap-2 group"
         >
-          <div className="relative">
-            <Moon className="w-6 h-6 text-amber-400 group-hover:text-amber-300 transition-colors" />
-            <Sparkles className="absolute -top-1 -right-1 w-3 h-3 text-amber-300 float-anim" />
-          </div>
-          <span className="text-lg font-bold tracking-wider shimmer-text">
+          <FlaskConical className="w-5 h-5 text-amber-700 group-hover:text-amber-600 transition-colors" />
+          <span className="text-base font-bold tracking-wide text-stone-800 group-hover:text-amber-800 transition-colors">
             命定香氣探索
           </span>
         </button>
@@ -46,8 +43,8 @@ export default function Navbar({ user, currentPage, onNavigate }: NavbarProps) {
               onClick={() => onNavigate(page)}
               className={`px-4 py-1.5 rounded-full text-sm transition-all duration-200 ${
                 currentPage === page
-                  ? "bg-amber-500/20 text-amber-300 border border-amber-500/40"
-                  : "text-amber-100/60 hover:text-amber-200 hover:bg-white/5"
+                  ? "bg-amber-100 text-amber-800 border border-amber-300"
+                  : "text-stone-500 hover:text-stone-800 hover:bg-stone-100"
               }`}
             >
               {label}
@@ -61,7 +58,7 @@ export default function Navbar({ user, currentPage, onNavigate }: NavbarProps) {
             onClick={() => startTransition(() => logout())}
             disabled={isPending}
             className="flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium border transition-all duration-300
-              border-amber-500/40 bg-amber-500/10 text-amber-300 hover:bg-red-900/20 hover:border-red-500/40 hover:text-red-300
+              border-stone-300 bg-stone-50 text-stone-700 hover:bg-red-50 hover:border-red-300 hover:text-red-600
               disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <User className="w-4 h-4" />
@@ -76,7 +73,7 @@ export default function Navbar({ user, currentPage, onNavigate }: NavbarProps) {
               router.push("/login");
             }}
             className="flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium border transition-all duration-300
-              border-amber-500/50 bg-amber-500/10 text-amber-300 hover:bg-amber-500/20 glow-border"
+              border-amber-400 bg-amber-50 text-amber-800 hover:bg-amber-100 hover:shadow-sm"
           >
             <LogIn className="w-4 h-4" />
             <span>登入 / 註冊</span>
@@ -92,8 +89,8 @@ export default function Navbar({ user, currentPage, onNavigate }: NavbarProps) {
             onClick={() => onNavigate(page)}
             className={`flex-1 py-1 rounded-full text-xs transition-all duration-200 ${
               currentPage === page
-                ? "bg-amber-500/20 text-amber-300 border border-amber-500/40"
-                : "text-amber-100/50 hover:text-amber-200 hover:bg-white/5"
+                ? "bg-amber-100 text-amber-800 border border-amber-300"
+                : "text-stone-500 hover:text-stone-800 hover:bg-stone-100"
             }`}
           >
             {label}

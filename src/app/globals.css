@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  --background: #0B1021;
-  --foreground: #e8d5a3;
+  --background: #FDFBF7;
+  --foreground: #44403c;
 }
 
 body {
@@ -54,11 +54,11 @@ body {
 .shimmer-text {
   background: linear-gradient(
     90deg,
-    #f59e0b 0%,
-    #fef3c7 30%,
-    #f59e0b 50%,
-    #fef3c7 80%,
-    #f59e0b 100%
+    #92400e 0%,
+    #d97706 30%,
+    #92400e 50%,
+    #d97706 80%,
+    #92400e 100%
   );
   background-size: 200% auto;
   -webkit-background-clip: text;
@@ -80,12 +80,12 @@ body {
 }
 
 .glass-card {
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(251, 191, 36, 0.2);
+  border: 1px solid rgba(231, 229, 228, 0.8);
 }
 
 ::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: #0B1021; }
-::-webkit-scrollbar-thumb { background: rgba(251, 191, 36, 0.4); border-radius: 3px; }
+::-webkit-scrollbar-track { background: #FDFBF7; }
+::-webkit-scrollbar-thumb { background: rgba(180, 162, 130, 0.5); border-radius: 3px; }

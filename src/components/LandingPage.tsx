@@ -41,7 +41,7 @@ export default function LandingPage({ onNavigateTarot }: LandingPageProps) {
       {/* Hero section */}
       <section className="text-center max-w-2xl fade-in-up">
         {/* Decorative top */}
-        <div className="flex items-center justify-center gap-3 mb-6 text-amber-400/60 text-sm tracking-widest">
+        <div className="flex items-center justify-center gap-3 mb-6 text-stone-400 text-sm tracking-widest">
           <span>✦</span>
           <span>SOULMATE SCENT</span>
           <span>✦</span>
@@ -54,10 +54,10 @@ export default function LandingPage({ onNavigateTarot }: LandingPageProps) {
           命定香氣
         </h1>
 
-        <p className="text-amber-100/60 text-lg mt-4 leading-relaxed">
+        <p className="text-stone-500 text-lg mt-4 leading-relaxed">
           每一種香氣，都是宇宙為你書寫的密語
           <br />
-          <span className="text-amber-400/80">
+          <span className="text-amber-700">
             透過塔羅牌，揭開你的香氛命運
           </span>
         </p>
@@ -75,21 +75,23 @@ export default function LandingPage({ onNavigateTarot }: LandingPageProps) {
         className="w-full max-w-xl fade-in-up"
         style={{ animationDelay: "0.2s" }}
       >
-        <div className="glass-card rounded-2xl p-6 border border-amber-500/20 glow-border relative overflow-hidden">
+        <div
+          className="bg-white rounded-2xl p-6 border border-stone-200 shadow-sm relative overflow-hidden"
+        >
           {/* Card glow bg */}
-          <div className="absolute inset-0 bg-gradient-to-br from-purple-900/10 via-transparent to-amber-900/10 rounded-2xl pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-br from-rose-50/60 via-transparent to-amber-50/60 rounded-2xl pointer-events-none" />
 
           {/* Card header */}
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
-              <Wind className="w-5 h-5 text-amber-400" />
-              <h2 className="text-amber-300 font-semibold tracking-wider text-sm">
+              <Wind className="w-5 h-5 text-amber-600" />
+              <h2 className="text-amber-800 font-semibold tracking-wider text-sm">
                 ✦ 當日能量彩虹卡
               </h2>
             </div>
             <button
               onClick={refreshPhrase}
-              className="text-amber-500/50 hover:text-amber-400 transition-colors p-1 rounded-full hover:bg-amber-500/10"
+              className="text-stone-400 hover:text-stone-600 transition-colors p-1 rounded-full hover:bg-stone-100"
               title="換一句"
             >
               <RefreshCw className="w-4 h-4" />
@@ -98,7 +100,7 @@ export default function LandingPage({ onNavigateTarot }: LandingPageProps) {
 
           {/* Phrase */}
           <p
-            className={`text-amber-100/90 text-base leading-relaxed text-center py-2 transition-opacity duration-300 ${
+            className={`text-stone-700 text-base leading-relaxed text-center py-2 transition-opacity duration-300 ${
               fadeIn ? "opacity-100" : "opacity-0"
             }`}
           >
@@ -112,8 +114,8 @@ export default function LandingPage({ onNavigateTarot }: LandingPageProps) {
                 key={i}
                 className={`h-1 rounded-full transition-all duration-300 ${
                   i === phraseIndex
-                    ? "w-6 bg-amber-400"
-                    : "w-1.5 bg-amber-500/30"
+                    ? "w-6 bg-amber-500"
+                    : "w-1.5 bg-stone-200"
                 }`}
               />
             ))}
@@ -128,16 +130,16 @@ export default function LandingPage({ onNavigateTarot }: LandingPageProps) {
       >
         <button
           onClick={onNavigateTarot}
-          className="group relative inline-flex items-center gap-3 px-8 py-4 rounded-full font-semibold text-lg text-[#0B1021] bg-gradient-to-r from-amber-400 to-yellow-300 hover:from-amber-300 hover:to-yellow-200 transition-all duration-300 shadow-lg hover:shadow-amber-500/30 hover:shadow-xl hover:scale-105 active:scale-95"
+          className="group relative inline-flex items-center gap-3 px-8 py-4 rounded-full font-semibold text-base text-stone-800 bg-white border border-stone-200 hover:border-amber-300 hover:text-amber-800 hover:bg-amber-50 transition-all duration-300 shadow-sm hover:shadow-md hover:scale-105 active:scale-95"
         >
           <Sparkles className="w-5 h-5 group-hover:rotate-12 transition-transform" />
           開始塔羅香氛配對
           <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-          {/* Inner glow */}
-          <span className="absolute inset-0 rounded-full bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+          {/* Subtle hover highlight */}
+          <span className="absolute inset-0 rounded-full bg-amber-50/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
         </button>
 
-        <p className="mt-3 text-amber-500/40 text-xs">
+        <p className="mt-3 text-stone-400 text-xs">
           選擇兩張塔羅牌・揭示你的命定香氣
         </p>
       </section>
@@ -154,13 +156,13 @@ export default function LandingPage({ onNavigateTarot }: LandingPageProps) {
         ].map((item) => (
           <div
             key={item.title}
-            className="glass-card rounded-xl p-4 text-center border border-amber-500/10 hover:border-amber-500/30 transition-all duration-300 hover:-translate-y-1 cursor-default"
+            className="bg-white rounded-2xl p-4 text-center border border-stone-100 hover:border-amber-200 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 cursor-default"
           >
             <div className="text-3xl mb-2">{item.icon}</div>
-            <h3 className="text-amber-300 font-semibold mb-1 text-sm">
+            <h3 className="text-amber-800 font-semibold mb-1 text-sm">
               {item.title}
             </h3>
-            <p className="text-amber-100/50 text-xs leading-relaxed">
+            <p className="text-stone-500 text-xs leading-relaxed">
               {item.desc}
             </p>
           </div>
