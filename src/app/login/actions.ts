@@ -26,8 +26,17 @@ export async function signup(formData: FormData) {
 
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
+  const nickname =
+    (formData.get("nickname") as string)?.trim() || email.split("@")[0];
+  const phone = (formData.get("phone") as string)?.trim() || "";
 
-  const { error } = await supabase.auth.signUp({ email, password });
+  const { error } = await supabase.auth.signUp({
+    email,
+    password,
+    options: {
+      data: { nickname, phone },
+    },
+  });
 
   if (error) {
     const message = mapAuthError(error.message);
@@ -35,8 +44,33 @@ export async function signup(formData: FormData) {
   }
 
   revalidatePath("/", "layout");
-  // 導向首頁並帶提示，informing user to check email if confirmation needed
-  redirect("/login?success=registered");
+  redirect("/");
+}
+
+export async function signInWithOAuth(provider: "google") {
+  const supabase = await createClient();
+
+  const origin = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider,
+    options: {
+      redirectTo: `${origin}/auth/callback`,
+      // For Google/Apple, set nickname from email + empty phone via trigger or callback
+      queryParams:
+        provider === "google"
+          ? { access_type: "offline", prompt: "consent" }
+          : undefined,
+    },
+  });
+
+  if (error || !data.url) {
+    redirect(
+      `/login?error=${encodeURIComponent("OAuth 登入失敗，請稍後再試")}`,
+    );
+  }
+
+  redirect(data.url);
 }
 
 export async function logout() {
