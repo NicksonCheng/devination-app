@@ -1,0 +1,82 @@
+{
+  "ENFJ": {
+    "scentFamily": "Spicy & Sweet（辛甜調）",
+    "keywords": ["Woody", "Spicy", "Powdery"],
+    "ingredients": ["Sandalwood", "Iris", "Vanilla", "Musk", "Patchouli"]
+  },
+  "ENTJ": {
+    "scentFamily": "Woody & Marine（木質海洋調）",
+    "keywords": ["Marine", "Herbal", "Floral", "Citrus"],
+    "ingredients": ["Muguet", "Green", "Jasmine", "Lemon"]
+  },
+  "ESFJ": {
+    "scentFamily": "Soft Floral（柔和花調）",
+    "keywords": ["Floral", "Citrus", "Woody", "Marine"],
+    "ingredients": ["Jasmine", "Rose", "Geranium", "Amber", "Musk"]
+  },
+  "ESTJ": {
+    "scentFamily": "Fresh Green（清新綠調）",
+    "keywords": ["Green", "Woody", "Citrus", "Spicy"],
+    "ingredients": ["Orange", "Pine", "Hinoki", "Patchouli"]
+  },
+  "ENFP": {
+    "scentFamily": "Fruity（果香調）",
+    "keywords": ["Fruity", "Powdery", "Citrus", "Floral"],
+    "ingredients": ["Balsamic", "Neroli", "Mandarin", "Jasmine", "Musk"]
+  },
+  "ENTP": {
+    "scentFamily": "Woody（木質調）",
+    "keywords": ["Woody", "Powdery", "Floral"],
+    "ingredients": ["Jasmine", "Cotton", "Patchouli", "Amber"]
+  },
+  "ESFP": {
+    "scentFamily": "Fresh & Clean（清新淨透調）",
+    "keywords": ["Fresh", "Citrus", "Floral"],
+    "ingredients": ["Jasmine", "Muguet", "Vanilla", "Musk"]
+  },
+  "ESTP": {
+    "scentFamily": "Oriental Spicy（東方辛香調）",
+    "keywords": ["Floral", "Woody", "Citrus"],
+    "ingredients": ["Lemon", "Rose", "Vanilla", "Patchouli"]
+  },
+  "INFJ": {
+    "scentFamily": "Musky / Aromatic（麝香芳香調）",
+    "keywords": ["Powdery", "Woody", "Floral", "Musky"],
+    "ingredients": ["Jasmine", "Ylang-Ylang", "Patchouli"]
+  },
+  "INTJ": {
+    "scentFamily": "Citrus（柑橘調）",
+    "keywords": ["Citrus", "Green", "Fruity", "Floral"],
+    "ingredients": ["Lemon", "Orange", "Rose", "Cassis"]
+  },
+  "ISFJ": {
+    "scentFamily": "Floral & Fresh（花香清新調）",
+    "keywords": ["Aromatic", "Floral", "Balsamic", "Citrus"],
+    "ingredients": ["Lavender", "Bergamot", "Green", "Musk"]
+  },
+  "ISTJ": {
+    "scentFamily": "Dry Woody（乾燥木質調）",
+    "keywords": ["Woody", "Musk", "Floral", "Powdery"],
+    "ingredients": ["Rose", "Iris", "Pheromone"]
+  },
+  "INFP": {
+    "scentFamily": "Sweet Fruity（甜美果香調）",
+    "keywords": ["Fruity", "Floral", "Woody", "Herbal"],
+    "ingredients": ["Raspberry", "Jasmine", "Green", "Lavender"]
+  },
+  "INTP": {
+    "scentFamily": "Marine / Aqua（海洋水調）",
+    "keywords": ["Citrus", "Amber", "Green", "Aromatic"],
+    "ingredients": ["Aqua", "Jasmine", "Green", "Musk"]
+  },
+  "ISFP": {
+    "scentFamily": "Floral（花香調）",
+    "keywords": ["Floral", "Fruity", "Citrus", "Woody"],
+    "ingredients": ["Rose", "Geranium", "Jasmine", "Amber"]
+  },
+  "ISTP": {
+    "scentFamily": "Woody（木質調）",
+    "keywords": ["Aromatic", "Woody", "Herbal", "Spicy"],
+    "ingredients": ["Eucalyptus", "Basil", "Sandalwood"]
+  }
+}

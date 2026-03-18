@@ -189,7 +189,10 @@ function LoginForm() {
           )}
 
           {/* Form */}
-          <form action={isLogin ? login : signup} className="relative space-y-5">
+          <form
+            action={isLogin ? login : signup}
+            className="relative space-y-5"
+          >
             {/* Email */}
             <div className="space-y-1.5">
               <label
@@ -318,7 +321,10 @@ function LoginForm() {
           </div>
 
           {/* OAuth buttons */}
-          <form action={signInWithOAuth.bind(null, "google")} className="relative">
+          <form
+            action={signInWithOAuth.bind(null, "google")}
+            className="relative"
+          >
             <OAuthButton
               provider="google"
               label="Google帳戶登入"

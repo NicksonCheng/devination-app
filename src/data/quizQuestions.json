@@ -1,0 +1,56 @@
+[
+  {
+    "question": "當你感到壓力時，你更傾向於：",
+    "options": [
+      { "text": "獨處，沉靜地思考", "scores": ["I", "T"] },
+      { "text": "找親近的人傾訴", "scores": ["E", "F"] },
+      { "text": "做一些令人愉快的事", "scores": ["E", "P"] },
+      { "text": "制定計劃解決問題", "scores": ["I", "J"] }
+    ]
+  },
+  {
+    "question": "在社交場合中，你通常是：",
+    "options": [
+      { "text": "安靜的觀察者", "scores": ["I", "S"] },
+      { "text": "用心傾聽他人", "scores": ["I", "F"] },
+      { "text": "聊天的氛圍製造者", "scores": ["E", "N"] },
+      { "text": "話題的引導者", "scores": ["E", "T"] }
+    ]
+  },
+  {
+    "question": "你最欣賞自己的什麼特質？",
+    "options": [
+      { "text": "堅定與獨立", "scores": ["I", "T"] },
+      { "text": "溫柔與體貼", "scores": ["F", "S"] },
+      { "text": "熱情與浪漫", "scores": ["E", "N"] },
+      { "text": "冷靜與理性", "scores": ["T", "J"] }
+    ]
+  },
+  {
+    "question": "在生活中，你認為什麼最重要？",
+    "options": [
+      { "text": "自我空間與隱私", "scores": ["I", "N"] },
+      { "text": "人際關係與陪伴", "scores": ["E", "F"] },
+      { "text": "美好的體驗與回憶", "scores": ["N", "P"] },
+      { "text": "秩序與自律", "scores": ["S", "J"] }
+    ]
+  },
+  {
+    "question": "面對困難時，你的反應是：",
+    "options": [
+      { "text": "冷靜地分析", "scores": ["T", "N"] },
+      { "text": "尋求支持與安慰", "scores": ["F", "S"] },
+      { "text": "尋找樂觀的視角", "scores": ["N", "P"] },
+      { "text": "制定具體行動計劃", "scores": ["S", "J"] }
+    ]
+  },
+  {
+    "question": "你理想中的生活方式是：",
+    "options": [
+      { "text": "簡潔而深刻", "scores": ["I", "N"] },
+      { "text": "溫暖而親密", "scores": ["F", "S"] },
+      { "text": "充滿儀式感與美好", "scores": ["N", "P"] },
+      { "text": "有序而充實", "scores": ["S", "J"] }
+    ]
+  }
+]

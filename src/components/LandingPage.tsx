@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Sparkles, Wind, ArrowRight, RefreshCw } from "lucide-react";
+import { Sparkles, Wind, RefreshCw } from "lucide-react";
 
 const ENERGY_PHRASES = [
   "✨ 今日的你，散發著月光般的柔和能量，吸引著命定之緣悄然靠近。",
@@ -13,9 +13,13 @@ const ENERGY_PHRASES = [
 
 interface LandingPageProps {
   onNavigateTarot: () => void;
+  onNavigateQuiz: () => void;
 }
 
-export default function LandingPage({ onNavigateTarot }: LandingPageProps) {
+export default function LandingPage({
+  onNavigateTarot,
+  onNavigateQuiz,
+}: LandingPageProps) {
   const [phraseIndex, setPhraseIndex] = useState(0);
   const [fadeIn, setFadeIn] = useState(true);
 
@@ -117,50 +121,47 @@ export default function LandingPage({ onNavigateTarot }: LandingPageProps) {
         </div>
       </section>
 
-      {/* CTA Button */}
+      {/* Feature teasers */}
       <section
-        className="text-center fade-in-up"
+        className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl w-full fade-in-up"
         style={{ animationDelay: "0.4s" }}
       >
         <button
           onClick={onNavigateTarot}
-          className="group relative inline-flex items-center gap-3 px-8 py-4 rounded-full font-semibold text-base text-stone-800 bg-white border border-stone-200 hover:border-amber-300 hover:text-amber-800 hover:bg-amber-50 transition-all duration-300 shadow-sm hover:shadow-md hover:scale-105 active:scale-95"
+          className="bg-white rounded-2xl p-6 text-center border border-stone-100 hover:border-amber-200 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 cursor-pointer"
         >
-          <Sparkles className="w-5 h-5 group-hover:rotate-12 transition-transform" />
-          開始塔羅香氛配對
-          <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-          {/* Subtle hover highlight */}
-          <span className="absolute inset-0 rounded-full bg-amber-50/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+          <div className="text-3xl mb-2">🧬</div>
+          <h3 className="text-amber-800 font-semibold mb-1 text-sm">
+            靈魂香氛實驗室
+          </h3>
+          <p className="text-stone-500 text-xs leading-relaxed">
+            情侶靈魂合盤・探索你們的命定香氣
+          </p>
         </button>
-
-        <p className="mt-3 text-stone-400 text-xs">
-          選擇兩張塔羅牌・揭示你的命定香氣
-        </p>
-      </section>
-
-      {/* Feature teasers */}
-      <section
-        className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl w-full fade-in-up"
-        style={{ animationDelay: "0.6s" }}
-      >
-        {[
-          { icon: "🔮", title: "塔羅配對", desc: "選擇星座牌陣，解讀香氛密碼" },
-          { icon: "🌸", title: "命定香氛", desc: "專屬於你靈魂的氣息組合" },
-          { icon: "✨", title: "能量共鳴", desc: "感受香氣與塔羅的神秘連結" },
-        ].map((item) => (
-          <div
-            key={item.title}
-            className="bg-white rounded-2xl p-4 text-center border border-stone-100 hover:border-amber-200 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 cursor-default"
-          >
-            <div className="text-3xl mb-2">{item.icon}</div>
-            <h3 className="text-amber-800 font-semibold mb-1 text-sm">
-              {item.title}
-            </h3>
-            <p className="text-stone-500 text-xs leading-relaxed">
-              {item.desc}
-            </p>
-          </div>
-        ))}
+        <button
+          onClick={onNavigateQuiz}
+          className="bg-white rounded-2xl p-6 text-center border border-stone-100 hover:border-amber-200 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 cursor-pointer"
+        >
+          <div className="text-3xl mb-2">🧪</div>
+          <h3 className="text-amber-800 font-semibold mb-1 text-sm">
+            香氛人格測試
+          </h3>
+          <p className="text-stone-500 text-xs leading-relaxed">
+            6 道問題・探索你的命定香氣
+          </p>
+        </button>
+        <button
+          onClick={() => {}}
+          className="bg-white rounded-2xl p-6 text-center border border-stone-100 hover:border-amber-200 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 cursor-pointer"
+        >
+          <div className="text-3xl mb-2">✨</div>
+          <h3 className="text-amber-800 font-semibold mb-1 text-sm">
+            能量共鳴
+          </h3>
+          <p className="text-stone-500 text-xs leading-relaxed">
+            感受香氣與塔羅的神秘連結
+          </p>
+        </button>
       </section>
     </div>
   );

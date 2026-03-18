@@ -4,10 +4,11 @@ import { useState, useEffect } from "react";
 import Navbar from "./Navbar";
 import LandingPage from "./LandingPage";
 import TarotPairing from "./TarotPairing";
+import FragranceQuiz from "./FragranceQuiz";
 import { createClient } from "@/utils/supabase/client";
 import type { User } from "@supabase/supabase-js";
 
-export type Page = "home" | "tarot";
+export type Page = "home" | "tarot" | "quiz";
 
 export default function AppShell({ children }: { children?: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -48,9 +49,13 @@ export default function AppShell({ children }: { children?: React.ReactNode }) {
 
         <main className="flex-1">
           {currentPage === "home" && (
-            <LandingPage onNavigateTarot={() => setCurrentPage("tarot")} />
+            <LandingPage
+              onNavigateTarot={() => setCurrentPage("tarot")}
+              onNavigateQuiz={() => setCurrentPage("quiz")}
+            />
           )}
           {currentPage === "tarot" && <TarotPairing />}
+          {currentPage === "quiz" && <FragranceQuiz />}
         </main>
 
         <footer className="text-center text-stone-400 text-xs py-4 border-t border-stone-200">

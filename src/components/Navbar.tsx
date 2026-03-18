@@ -20,6 +20,7 @@ export default function Navbar({ user, currentPage, onNavigate }: NavbarProps) {
   const navLinks: { label: string; page: Page }[] = [
     { label: "首頁", page: "home" },
     { label: "🧬 配對分析", page: "tarot" },
+    { label: "🧪 香氛測驗", page: "quiz" },
   ];
   return (
     <header className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-md border-b border-stone-200/80 shadow-sm">
