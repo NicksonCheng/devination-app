@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { getFragranceProfile } from "@/app/actions/getFragranceProfile";
+import { saveQuizHistory } from "@/app/actions/saveQuizHistory";
 import type { FragranceProfile } from "@/lib/fragranceData";
 import QUESTIONS_DATA from "@/data/quizQuestions.json";
 import { Sparkles, RotateCcw, Share2, FlaskConical } from "lucide-react";
@@ -78,6 +79,7 @@ export default function FragranceQuiz() {
       setMbtiType(mbti);
       const profile = await getFragranceProfile(mbti);
       setResult(profile);
+      saveQuizHistory("personality_quiz", { mbti, ...profile });
       setStep("result");
     }
   };

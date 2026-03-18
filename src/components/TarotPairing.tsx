@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import ZODIACS from "@/data/zodiacs.json";
 import { getFallbackPair, PairResult } from "@/lib/pairFallback";
+import { saveQuizHistory } from "@/app/actions/saveQuizHistory";
 
 const selectClass =
   "w-full py-3 px-4 rounded-2xl bg-stone-50 border border-stone-200 text-stone-700 text-sm " +
@@ -36,6 +37,7 @@ export default function TarotPairing() {
       });
       const data: PairResult = await res.json();
       setResult(data);
+      saveQuizHistory("fragrance_lab", { signA, signB, ...data });
     } catch {
       //setResult(getFallbackPair(signA, signB));
     } finally {

@@ -1,11 +1,19 @@
 "use client";
 
-import { FlaskConical, User, LogIn, LogOut } from "lucide-react";
+import {
+  FlaskConical,
+  User,
+  LogIn,
+  LogOut,
+  ChevronDown,
+  BookOpen,
+  UserCircle,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useTransition } from "react";
+import { useRef, useState, useTransition, useEffect } from "react";
 import type { Page } from "./AppShell";
 import type { User as SupabaseUser } from "@supabase/supabase-js";
-import { logout } from "@/app/login/actions";
+import { createClient } from "@/utils/supabase/client";
 
 interface NavbarProps {
   user: SupabaseUser | null;
@@ -16,12 +24,44 @@ interface NavbarProps {
 export default function Navbar({ user, currentPage, onNavigate }: NavbarProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
   const isLoggedIn = !!user;
+
+  const displayName =
+    (user?.user_metadata?.nickname as string | undefined) ||
+    user?.email?.split("@")[0] ||
+    "用戶";
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(e.target as Node)
+      ) {
+        setDropdownOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleLogout = () => {
+    setDropdownOpen(false);
+    startTransition(async () => {
+      const supabase = createClient();
+      await supabase.auth.signOut();
+      router.refresh();
+    });
+  };
+
   const navLinks: { label: string; page: Page }[] = [
     { label: "首頁", page: "home" },
     { label: "🧬 配對分析", page: "tarot" },
     { label: "🧪 香氛測驗", page: "quiz" },
   ];
+
   return (
     <header className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-md border-b border-stone-200/80 shadow-sm">
       <div className="max-w-6xl mx-auto flex items-center justify-between px-4 py-3">
@@ -53,28 +93,80 @@ export default function Navbar({ user, currentPage, onNavigate }: NavbarProps) {
           ))}
         </nav>
 
-        {/* Auth button */}
+        {/* Auth area */}
         {isLoggedIn ? (
-          <button
-            onClick={() => startTransition(() => logout())}
-            disabled={isPending}
-            className="flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium border transition-all duration-300
-              border-stone-300 bg-stone-50 text-stone-700 hover:bg-red-50 hover:border-red-300 hover:text-red-600
-              disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <User className="w-4 h-4" />
-            <span className="hidden sm:inline">
-              {user?.email?.split("@")[0]}
-            </span>
-            <LogOut className="w-3 h-3 opacity-60" />
-          </button>
+          <div className="relative" ref={dropdownRef}>
+            {/* Dropdown trigger */}
+            <button
+              onClick={() => setDropdownOpen((v) => !v)}
+              disabled={isPending}
+              className="flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium border transition-all duration-300
+                border-stone-200 bg-stone-50 text-stone-700 hover:bg-amber-50 hover:border-amber-300 hover:text-amber-800
+                disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <User className="w-4 h-4 text-amber-600" />
+              <span className="hidden sm:inline max-w-[96px] truncate">
+                {displayName}
+              </span>
+              <ChevronDown
+                className={`w-3.5 h-3.5 opacity-60 transition-transform duration-200 ${
+                  dropdownOpen ? "rotate-180" : ""
+                }`}
+              />
+            </button>
+
+            {/* Dropdown menu */}
+            {dropdownOpen && (
+              <div
+                className="absolute right-0 mt-2 w-48 rounded-2xl bg-white border border-[#E5E0D8] shadow-md
+                  animate-in fade-in slide-in-from-top-2 duration-150 overflow-hidden"
+              >
+                <div className="px-4 py-3 border-b border-stone-100">
+                  <p className="text-xs text-stone-400">登入身份</p>
+                  <p className="text-sm font-semibold text-stone-700 truncate">
+                    {displayName}
+                  </p>
+                </div>
+                <div className="py-1">
+                  <button
+                    onClick={() => {
+                      setDropdownOpen(false);
+                      router.push("/profile");
+                    }}
+                    className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-stone-600 hover:bg-amber-50 hover:text-amber-800 transition-colors"
+                  >
+                    <UserCircle className="w-4 h-4 text-amber-500" />
+                    個人資料
+                  </button>
+                  <button
+                    onClick={() => {
+                      setDropdownOpen(false);
+                      router.push("/history");
+                    }}
+                    className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-stone-600 hover:bg-amber-50 hover:text-amber-800 transition-colors"
+                  >
+                    <BookOpen className="w-4 h-4 text-amber-500" />
+                    我的專屬紀錄
+                  </button>
+                  <div className="my-1 border-t border-stone-100" />
+                  <button
+                    onClick={handleLogout}
+                    disabled={isPending}
+                    className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-500 hover:bg-red-50 transition-colors
+                      disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    登出
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
         ) : (
           <button
-            onClick={() => {
-              router.push("/login");
-            }}
-            className="flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium border transition-all duration-300
-              border-amber-400 bg-amber-50 text-amber-800 hover:bg-amber-100 hover:shadow-sm"
+            onClick={() => router.push("/login")}
+            className="flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-300
+              bg-[#8B7D6B] text-white hover:bg-[#7a6c5c] hover:shadow-md"
           >
             <LogIn className="w-4 h-4" />
             <span>登入 / 註冊</span>

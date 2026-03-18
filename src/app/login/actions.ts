@@ -29,12 +29,13 @@ export async function signup(formData: FormData) {
   const nickname =
     (formData.get("nickname") as string)?.trim() || email.split("@")[0];
   const phone = (formData.get("phone") as string)?.trim() || "";
+  const birthdate = (formData.get("birthdate") as string)?.trim() || "";
 
   const { error } = await supabase.auth.signUp({
     email,
     password,
     options: {
-      data: { nickname, phone },
+      data: { nickname, phone, birthdate },
     },
   });
 

@@ -15,6 +15,7 @@ import {
   ArrowLeft,
   User,
   Phone,
+  Cake,
 } from "lucide-react";
 import { login, signup, signInWithOAuth } from "./actions";
 
@@ -303,6 +304,31 @@ function LoginForm() {
                         transition-all duration-200"
                     />
                   </div>
+                </div>
+
+                {/* Birthdate */}
+                <div className="space-y-1.5">
+                  <label
+                    htmlFor="birthdate"
+                    className="block text-stone-500 text-xs tracking-widest uppercase"
+                  >
+                    生日
+                  </label>
+                  <div className="relative">
+                    <Cake className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-amber-500/60 pointer-events-none" />
+                    <input
+                      id="birthdate"
+                      name="birthdate"
+                      type="date"
+                      autoComplete="bday"
+                      className="w-full pl-10 pr-4 py-3 rounded-xl bg-stone-50 border border-stone-200 text-stone-800 placeholder-stone-300 text-sm
+                        focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20
+                        transition-all duration-200"
+                    />
+                  </div>
+                  <p className="text-stone-400 text-xs pl-1">
+                    選填・用於個人化你的香氛體驗
+                  </p>
                 </div>
               </>
             )}
