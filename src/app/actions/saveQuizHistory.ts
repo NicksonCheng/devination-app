@@ -28,7 +28,9 @@ export async function saveQuizHistory(
   if (error) {
     // Table doesn't exist yet — log but don't crash
     if (error.message.includes("quiz_history")) {
-      console.warn("[saveQuizHistory] Table not found — run the SQL migration in Supabase Dashboard");
+      console.warn(
+        "[saveQuizHistory] Table not found — run the SQL migration in Supabase Dashboard",
+      );
       return { success: false, error: "table_not_ready" };
     }
     console.error("[saveQuizHistory]", error.message);

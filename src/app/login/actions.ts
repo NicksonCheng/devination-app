@@ -51,7 +51,7 @@ export async function signup(formData: FormData) {
 export async function signInWithOAuth(provider: "google") {
   const supabase = await createClient();
 
-  const origin = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+  const origin = process.env.NEXT_PUBLIC_SITE_URL;
 
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider,

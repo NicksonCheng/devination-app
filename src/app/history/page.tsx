@@ -34,9 +34,7 @@ function DetailModal({
 }) {
   const rd = row.result_data;
   const title =
-    (rd.title as string) ||
-    (rd.result as string) ||
-    quizLabel(row.quiz_type);
+    (rd.title as string) || (rd.result as string) || quizLabel(row.quiz_type);
 
   const isLab = row.quiz_type === "fragrance_lab";
 
@@ -105,13 +103,15 @@ function DetailModal({
         {/* Body */}
         <div className="px-6 py-5 space-y-5">
           {/* Lab: sign pair */}
-          {isLab && typeof rd.signA === "string" && typeof rd.signB === "string" && (
-            <Section label="星座配對">
-              <p className="text-stone-700 text-sm">
-                {rd.signA} × {rd.signB}
-              </p>
-            </Section>
-          )}
+          {isLab &&
+            typeof rd.signA === "string" &&
+            typeof rd.signB === "string" && (
+              <Section label="星座配對">
+                <p className="text-stone-700 text-sm">
+                  {rd.signA} × {rd.signB}
+                </p>
+              </Section>
+            )}
 
           {/* Quiz: MBTI */}
           {!isLab && typeof rd.mbti === "string" && (
