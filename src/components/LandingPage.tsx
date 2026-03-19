@@ -1,15 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Sparkles, Wind, RefreshCw } from "lucide-react";
-
-const ENERGY_PHRASES = [
-  "✨ 今日的你，散發著月光般的柔和能量，吸引著命定之緣悄然靠近。",
-  "🌸 玫瑰與雪松的氣息環繞你，象徵著內心深處等待盛放的美麗。",
-  "🌙 星辰低語：你的靈魂正在尋找那一縷讓心靈共鳴的神秘香氣。",
-  "☽ 今日水星逆行已結束，是時候讓香氣引領你走入命運的交匯點。",
-  "🔮 塔羅牌揭示：你的氣場與大地檀木產生了奇妙的共鳴，靜心感受。",
-];
+import ENERGY_PHRASES from "@/data/energyPhrases.json";
 
 interface LandingPageProps {
   onNavigateTarot: () => void;
@@ -20,13 +13,10 @@ export default function LandingPage({
   onNavigateTarot,
   onNavigateQuiz,
 }: LandingPageProps) {
-  const [phraseIndex, setPhraseIndex] = useState(0);
+  const [phraseIndex, setPhraseIndex] = useState(() =>
+    Math.floor(Math.random() * ENERGY_PHRASES.length),
+  );
   const [fadeIn, setFadeIn] = useState(true);
-
-  useEffect(() => {
-    // Pick random phrase on mount
-    setPhraseIndex(Math.floor(Math.random() * ENERGY_PHRASES.length));
-  }, []);
 
   const refreshPhrase = () => {
     setFadeIn(false);
@@ -151,7 +141,12 @@ export default function LandingPage({
           </p>
         </button>
         <button
-          onClick={() => {}}
+          onClick={() =>
+            window.open(
+              "https://myship.7-11.com.tw/general/detail/GM2603185975610",
+              "_blank",
+            )
+          }
           className="bg-white rounded-2xl p-6 text-center border border-stone-100 hover:border-amber-200 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 cursor-pointer"
         >
           <div className="text-3xl mb-2">✨</div>

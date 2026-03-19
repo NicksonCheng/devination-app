@@ -51,14 +51,14 @@ export async function signup(formData: FormData) {
 export async function signInWithOAuth(provider: "google") {
   const supabase = await createClient();
 
-  // Strip trailing slash to avoid double-slash in redirect URL
-  const origin = (
-    process.env.NEXT_PUBLIC_SITE_URL ||
-    (process.env.VERCEL_URL
-      ? `https://${process.env.VERCEL_URL}`
-      : "http://localhost:3000")
-  ).replace(/\/$/, "");
-
+  // In dev always use localhost; in production use NEXT_PUBLIC_SITE_URL
+  const origin =
+    process.env.NODE_ENV === "development"
+      ? "http://localhost:3000"
+      : (
+          process.env.NEXT_PUBLIC_SITE_URL ||
+          `https://${process.env.VERCEL_URL}`
+        ).replace(/\/$/, "");
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider,
     options: {
