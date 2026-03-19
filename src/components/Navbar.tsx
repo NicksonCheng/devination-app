@@ -63,7 +63,7 @@ export default function Navbar({ user, currentPage, onNavigate }: NavbarProps) {
   ];
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-md border-b border-stone-200/80 shadow-sm">
+    <header className="sticky top-0 z-50 w-full bg-white/95 supports-[backdrop-filter]:bg-white/80 supports-[backdrop-filter]:backdrop-blur-md border-b border-stone-200/80 shadow-sm">
       <div className="max-w-6xl mx-auto flex items-center justify-between px-4 py-3">
         {/* Logo */}
         <button

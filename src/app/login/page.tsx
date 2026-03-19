@@ -94,9 +94,9 @@ function LoginForm() {
     <div className="relative min-h-screen bg-[#FDFBF7] flex flex-col items-center justify-center px-4 overflow-hidden">
       {/* Ambient glow blobs matching AppShell */}
       <div className="pointer-events-none fixed inset-0 z-0">
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full bg-rose-100/40 blur-[120px]" />
-        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full bg-amber-100/40 blur-[100px]" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-stone-100/60 blur-[120px]" />
+        <div className="absolute top-0 right-0 w-[200px] h-[200px] sm:w-[500px] sm:h-[500px] rounded-full bg-rose-100/40 blur-[60px] sm:blur-[100px]" />
+        <div className="absolute bottom-0 left-0 w-[160px] h-[160px] sm:w-[400px] sm:h-[400px] rounded-full bg-amber-100/40 blur-[50px] sm:blur-[80px]" />
+        <div className="hidden sm:block absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-stone-100/60 blur-[100px]" />
       </div>
 
       {/* Back button */}
