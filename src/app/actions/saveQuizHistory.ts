@@ -2,7 +2,7 @@
 
 import { createClient } from "@/utils/supabase/server";
 
-export type QuizType = "fragrance_lab" | "personality_quiz";
+export type QuizType = "fragrance_lab" | "personality_quiz" | "numerology";
 
 export async function saveQuizHistory(
   quiz_type: QuizType,

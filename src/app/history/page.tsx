@@ -10,6 +10,7 @@ import {
   FlaskRound,
   Brain,
   Calendar,
+  Moon,
   X,
 } from "lucide-react";
 
@@ -20,23 +21,40 @@ interface HistoryRow {
   created_at: string;
 }
 
+type QuizType = "personality_quiz" | "fragrance_lab" | "numerology";
+
+const TABS: { type: QuizType; label: string }[] = [
+  { type: "personality_quiz", label: "香氛人格" },
+  { type: "fragrance_lab", label: "靈魂香氣" },
+  { type: "numerology", label: "流年香氣" },
+];
+
+const quizLabel = (type: string) =>
+  TABS.find((t) => t.type === type)?.label ?? "香氛人格";
+
+function QuizIcon({ type }: { type: string }) {
+  if (type === "fragrance_lab")
+    return <FlaskRound className="w-5 h-5 text-amber-600" />;
+  if (type === "numerology") return <Moon className="w-5 h-5 text-[#91634B]" />;
+  return <Brain className="w-5 h-5 text-rose-500" />;
+}
+
 /* ────────────────── Detail Modal ────────────────── */
 function DetailModal({
   row,
   onClose,
   formatDate,
-  quizLabel,
 }: {
   row: HistoryRow;
   onClose: () => void;
   formatDate: (iso: string) => string;
-  quizLabel: (t: string) => string;
 }) {
   const rd = row.result_data;
   const title =
     (rd.title as string) || (rd.result as string) || quizLabel(row.quiz_type);
 
   const isLab = row.quiz_type === "fragrance_lab";
+  const isNumerology = row.quiz_type === "numerology";
 
   // Close on Escape
   useEffect(() => {
@@ -82,11 +100,7 @@ function DetailModal({
         {/* Header band */}
         <div className="bg-gradient-to-br from-amber-50 to-rose-50 rounded-t-3xl px-6 pt-6 pb-5 border-b border-stone-100">
           <div className="flex items-center gap-2 mb-3">
-            {isLab ? (
-              <FlaskRound className="w-5 h-5 text-amber-600" />
-            ) : (
-              <Brain className="w-5 h-5 text-rose-500" />
-            )}
+            <QuizIcon type={row.quiz_type} />
             <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-white/80 text-amber-700">
               {quizLabel(row.quiz_type)}
             </span>
@@ -113,8 +127,25 @@ function DetailModal({
               </Section>
             )}
 
+          {/* Numerology: 守護神 & 香氣區 */}
+          {isNumerology && typeof rd.godName === "string" && (
+            <Section label="香氣守護神">
+              <p className="text-stone-800 text-base font-semibold">
+                {rd.godName}
+              </p>
+              {typeof rd.quote === "string" && (
+                <p className="text-stone-500 text-xs italic mt-1">{rd.quote}</p>
+              )}
+              {typeof rd.element === "string" && (
+                <span className="inline-block mt-2 px-3 py-0.5 rounded-full border border-[#A7A48F] text-[#91634B] text-xs">
+                  {rd.element}
+                </span>
+              )}
+            </Section>
+          )}
+
           {/* Quiz: MBTI */}
-          {!isLab && typeof rd.mbti === "string" && (
+          {row.quiz_type === "personality_quiz" && typeof rd.mbti === "string" && (
             <Section label="MBTI 類型">
               <span className="inline-block px-3 py-1 rounded-full bg-amber-100 text-amber-800 text-sm font-semibold">
                 {rd.mbti}
@@ -166,6 +197,39 @@ function DetailModal({
             </Section>
           )}
 
+          {/* Numerology: KPIA 香氣組合 */}
+          {isNumerology && Array.isArray(rd.scents) && (
+            <Section label="命定調香組合">
+              <div className="flex flex-wrap gap-1.5">
+                {(rd.scents as string[]).map((scent) => (
+                  <span
+                    key={scent}
+                    className="text-xs px-2.5 py-0.5 rounded-full bg-[#F1EAD8] text-[#91634B] border border-[#A7A48F]/40"
+                  >
+                    {scent}
+                  </span>
+                ))}
+              </div>
+            </Section>
+          )}
+
+          {/* Numerology: 年度分析 */}
+          {isNumerology &&
+            [
+              { label: "2026 年度生命課題與意義", value: rd.challenge },
+              { label: "2026 年度人生天賦", value: rd.talent },
+              { label: "年度尋境行動指南", value: rd.action },
+            ].map(
+              ({ label, value }) =>
+                typeof value === "string" && (
+                  <Section key={label} label={label}>
+                    <p className="text-stone-600 text-sm leading-relaxed">
+                      {value}
+                    </p>
+                  </Section>
+                ),
+            )}
+
           {/* Advice */}
           {typeof rd.advice === "string" && (
             <Section label="建議">
@@ -214,6 +278,7 @@ export default function HistoryPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selected, setSelected] = useState<HistoryRow | null>(null);
+  const [activeTab, setActiveTab] = useState<QuizType>("personality_quiz");
 
   useEffect(() => {
     const supabase = createClient();
@@ -252,15 +317,21 @@ export default function HistoryPage() {
     });
   };
 
-  const quizLabel = (type: string) =>
-    type === "fragrance_lab" ? "靈魂香氛實驗室" : "香氛人格測試";
+  // 流年香氣一年只變一次：同生日、同年份只保留最新一筆（rows 已依時間新到舊排序）
+  const dedupedRows = (() => {
+    const seen = new Set<string>();
+    return rows.filter((row) => {
+      if (row.quiz_type !== "numerology") return true;
+      const rd = row.result_data;
+      const year = rd.year ?? new Date(row.created_at).getFullYear();
+      const key = `${year}|${rd.birthdate}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  })();
 
-  const QuizIcon = ({ type }: { type: string }) =>
-    type === "fragrance_lab" ? (
-      <FlaskRound className="w-5 h-5 text-amber-600" />
-    ) : (
-      <Brain className="w-5 h-5 text-rose-500" />
-    );
+  const visibleRows = dedupedRows.filter((row) => row.quiz_type === activeTab);
 
   const closeModal = useCallback(() => setSelected(null), []);
 
@@ -302,6 +373,31 @@ export default function HistoryPage() {
         </p>
       </div>
 
+      {/* Category tabs */}
+      <div className="relative z-10 w-full max-w-2xl mb-6">
+        <div className="flex gap-1 p-1 rounded-full bg-white border border-stone-200 shadow-sm">
+          {TABS.map(({ type, label }) => {
+            const count = dedupedRows.filter((r) => r.quiz_type === type).length;
+            return (
+              <button
+                key={type}
+                onClick={() => setActiveTab(type)}
+                className={`flex-1 py-2 rounded-full text-sm transition-all duration-200 ${
+                  activeTab === type
+                    ? "bg-amber-100 text-amber-800 border border-amber-300"
+                    : "text-stone-500 hover:text-stone-800 hover:bg-stone-100 border border-transparent"
+                }`}
+              >
+                {label}
+                {!loading && (
+                  <span className="ml-1 text-xs opacity-60">{count}</span>
+                )}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
       {/* Content */}
       <div className="relative z-10 w-full max-w-2xl">
         {loading ? (
@@ -312,15 +408,15 @@ export default function HistoryPage() {
           <div className="text-center py-16">
             <p className="text-red-500 text-sm">{error}</p>
           </div>
-        ) : rows.length === 0 ? (
+        ) : visibleRows.length === 0 ? (
           <div className="text-center py-16">
             <p className="text-stone-400 text-sm">
-              還沒有任何紀錄，快去探索你的命定香氣吧 ✦
+              還沒有「{quizLabel(activeTab)}」的紀錄，快去探索你的命定香氣吧 ✦
             </p>
           </div>
         ) : (
           <div className="space-y-4">
-            {rows.map((row) => {
+            {visibleRows.map((row) => {
               const rd = row.result_data;
               const title =
                 (rd.title as string) ||
@@ -350,6 +446,26 @@ export default function HistoryPage() {
                         <p className="text-stone-500 text-xs mt-1 line-clamp-2">
                           {rd.personality_desc}
                         </p>
+                      )}
+                      {row.quiz_type === "numerology" &&
+                        typeof rd.godName === "string" && (
+                          <p className="text-stone-500 text-xs mt-1 line-clamp-2">
+                            香氣守護神：{rd.godName}
+                            {typeof rd.element === "string" &&
+                              ` · ${rd.element}`}
+                          </p>
+                        )}
+                      {Array.isArray(rd.scents) && (
+                        <div className="flex flex-wrap gap-1 mt-2">
+                          {(rd.scents as string[]).slice(0, 4).map((note) => (
+                            <span
+                              key={note}
+                              className="text-[10px] px-2 py-0.5 rounded-full bg-stone-100 text-stone-500"
+                            >
+                              {note}
+                            </span>
+                          ))}
+                        </div>
                       )}
                       {Array.isArray(rd.scent_notes) && (
                         <div className="flex flex-wrap gap-1 mt-2">
@@ -384,7 +500,6 @@ export default function HistoryPage() {
           row={selected}
           onClose={closeModal}
           formatDate={formatDate}
-          quizLabel={quizLabel}
         />
       )}
     </div>

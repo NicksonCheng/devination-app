@@ -60,6 +60,7 @@ export default function Navbar({ user, currentPage, onNavigate }: NavbarProps) {
     { label: "首頁", page: "home" },
     { label: "🧬 配對分析", page: "tarot" },
     { label: "🧪 香氛測驗", page: "quiz" },
+    { label: "🌙 流年香氣", page: "numerology" },
   ];
 
   return (
