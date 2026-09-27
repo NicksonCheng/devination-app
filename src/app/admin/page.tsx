@@ -7,6 +7,7 @@ import {
   getContents,
   type ContentKey,
 } from "@/lib/content";
+import { getAllUsers } from "@/app/actions/admin";
 import AdminPanel from "@/components/admin/AdminPanel";
 
 export const dynamic = "force-dynamic";
@@ -20,11 +21,14 @@ export default async function AdminPage() {
   if (!(await getIsAdmin())) redirect("/");
 
   const keys = Object.keys(CONTENT_DEFAULTS) as ContentKey[];
-  const [content, customizedRows, hasPassword] = await Promise.all([
-    getContents(keys),
-    supabase.from("site_content").select("key, updated_at"),
-    supabase.rpc("has_numerology_password"),
-  ]);
+  const [content, customizedRows, hasPassword, usersResult] = await Promise.all(
+    [
+      getContents(keys),
+      supabase.from("site_content").select("key, updated_at"),
+      supabase.rpc("has_numerology_password"),
+      getAllUsers(),
+    ],
+  );
 
   return (
     <AdminPanel
@@ -35,6 +39,7 @@ export default async function AdminPage() {
         (customizedRows.data ?? []).map((r) => [r.key, r.updated_at]),
       )}
       hasPassword={hasPassword.data === true}
+      users={usersResult.ok ? usersResult.users : []}
     />
   );
 }

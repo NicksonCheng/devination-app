@@ -181,3 +181,86 @@ end;
 $$;
 
 revoke execute on function public.set_numerology_password(text) from anon;
+
+
+/* ------------------------------------------------------------------ */
+/*  後台帳號管理                                                        */
+/* ------------------------------------------------------------------ */
+
+-- 允許管理員讀取所有人的 quiz_history
+create policy "Admins can read all quiz history"
+  on public.quiz_history for
+select
+  using (public.is_admin());
+
+-- 管理員查看所有帳號清單（包含 auth.users 的 metadata）
+-- 只有管理員可以呼叫，security definer 確保有權限讀 auth schema
+create or replace function public.get_all_users_for_admin()
+returns table (
+  user_id       uuid,
+  email         text,
+  nickname      text,
+  phone         text,
+  birthdate     text,
+  created_at    timestamptz,
+  last_sign_in  timestamptz,
+  quiz_count    bigint,
+  is_admin      boolean
+)
+language plpgsql
+security definer
+set search_path = public, auth
+as $$
+begin
+  if not public.is_admin() then
+    raise exception 'not authorized';
+  end if;
+
+  return query
+  select
+    u.id                                              as user_id,
+    u.email::text                                     as email,
+    (u.raw_user_meta_data->>'nickname')::text         as nickname,
+    (u.raw_user_meta_data->>'phone')::text            as phone,
+    (u.raw_user_meta_data->>'birthdate')::text        as birthdate,
+    u.created_at                                      as created_at,
+    u.last_sign_in_at                                 as last_sign_in,
+    (select count(*) from public.quiz_history qh
+     where qh.user_id = u.id)                        as quiz_count,
+    exists (select 1 from public.admin_users au
+            where au.user_id = u.id)                 as is_admin
+  from auth.users u
+  order by u.created_at desc;
+end;
+$$;
+
+revoke execute on function public.get_all_users_for_admin() from anon, authenticated;
+grant execute on function public.get_all_users_for_admin() to authenticated;
+
+-- 管理員讀取特定用戶的 quiz_history
+create or replace function public.get_user_history_for_admin(p_user_id uuid)
+returns table (
+  id           uuid,
+  quiz_type    text,
+  result_data  jsonb,
+  created_at   timestamptz
+)
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  if not public.is_admin() then
+    raise exception 'not authorized';
+  end if;
+
+  return query
+  select qh.id, qh.quiz_type, qh.result_data, qh.created_at
+  from public.quiz_history qh
+  where qh.user_id = p_user_id
+  order by qh.created_at desc;
+end;
+$$;
+
+revoke execute on function public.get_user_history_for_admin(uuid) from anon, authenticated;
+grant execute on function public.get_user_history_for_admin(uuid) to authenticated;

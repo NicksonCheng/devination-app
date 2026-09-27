@@ -13,19 +13,22 @@ import {
   Plus,
   Trash2,
   RotateCcw,
+  Users,
 } from "lucide-react";
 import type { Content, ContentKey } from "@/lib/content";
+import type { AdminUser } from "@/app/actions/admin";
 import {
   saveContent,
   resetContent,
   setNumerologyPassword,
 } from "@/app/actions/admin";
+import UsersPanel from "./UsersPanel";
 
 /* ------------------------------------------------------------------ */
 /*  調香師後台                                                          */
 /* ------------------------------------------------------------------ */
 
-type Section = "password" | ContentKey;
+type Section = "password" | "users" | ContentKey;
 type Toast = { type: "success" | "error"; message: string } | null;
 
 // 程式依賴的欄位，只顯示不可編輯（與 src/lib/content.ts 的 READONLY_FIELDS 一致）
@@ -253,12 +256,14 @@ export default function AdminPanel({
   labels,
   updatedAt,
   hasPassword,
+  users,
 }: {
   content: Content;
   defaults: Content;
   labels: Record<ContentKey, string>;
   updatedAt: Record<string, string>;
   hasPassword: boolean;
+  users: AdminUser[];
 }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -339,7 +344,7 @@ export default function AdminPanel({
     >
       {icon}
       <span className="flex-1 truncate">{label}</span>
-      {key !== "password" && isDirty(key) && (
+      {key !== "password" && key !== "users" && isDirty(key as ContentKey) && (
         <span className="w-2 h-2 rounded-full bg-amber-500" title="尚未儲存" />
       )}
     </button>
@@ -365,6 +370,12 @@ export default function AdminPanel({
           {/* Sidebar */}
           <nav className="md:w-60 shrink-0 space-y-1 bg-white border border-stone-200 rounded-2xl p-2 h-fit">
             {navItem(
+              "users",
+              `帳號管理（${users.length}）`,
+              <Users className="w-4 h-4 text-amber-600" />,
+            )}
+            <div className="h-px bg-stone-100 my-1" />
+            {navItem(
               "password",
               "流年香氣密碼",
               <KeyRound className="w-4 h-4 text-amber-600" />,
@@ -384,7 +395,17 @@ export default function AdminPanel({
 
           {/* Main */}
           <div className="flex-1 min-w-0">
-            {section === "password" ? (
+            {section === "users" ? (
+              <div className="space-y-4">
+                <div>
+                  <h2 className="font-semibold">帳號管理</h2>
+                  <p className="text-xs text-stone-400 mt-0.5">
+                    點擊帳號可展開查看資料與測驗紀錄
+                  </p>
+                </div>
+                <UsersPanel users={users} />
+              </div>
+            ) : section === "password" ? (
               <form
                 onSubmit={handlePassword}
                 className="bg-white border border-stone-200 rounded-2xl p-6 space-y-4"
@@ -415,16 +436,16 @@ export default function AdminPanel({
               <div className="space-y-4">
                 <div className="flex items-center justify-between gap-3 flex-wrap">
                   <div>
-                    <h2 className="font-semibold">{labels[section]}</h2>
+                    <h2 className="font-semibold">{labels[section as ContentKey]}</h2>
                     <p className="text-xs text-stone-400 mt-0.5">
                       {customized.has(section)
                         ? "使用後台修改過的內容"
                         : "使用預設內容"}
                     </p>
                   </div>
-                  {customized.has(section) && (
+                  {customized.has(section as ContentKey) && (
                     <button
-                      onClick={() => handleReset(section)}
+                      onClick={() => handleReset(section as ContentKey)}
                       disabled={isPending}
                       className="flex items-center gap-1 text-xs text-stone-400 hover:text-red-500"
                     >
@@ -435,7 +456,7 @@ export default function AdminPanel({
 
                 <ValueEditor
                   key={section}
-                  value={values[section]}
+                  value={values[section as ContentKey]}
                   path=""
                   depth={0}
                   onChange={(v) =>
@@ -444,10 +465,13 @@ export default function AdminPanel({
                 />
 
                 <div className="sticky bottom-4 flex justify-end gap-2">
-                  {isDirty(section) && (
+                  {isDirty(section as ContentKey) && (
                     <button
                       onClick={() =>
-                        setValues((v) => ({ ...v, [section]: saved[section] }))
+                        setValues((v) => ({
+                          ...v,
+                          [section]: saved[section as ContentKey],
+                        }))
                       }
                       disabled={isPending}
                       className="px-4 py-2 rounded-xl bg-white border border-stone-200 text-sm text-stone-600 shadow-sm"
@@ -456,8 +480,8 @@ export default function AdminPanel({
                     </button>
                   )}
                   <button
-                    onClick={() => handleSave(section)}
-                    disabled={isPending || !isDirty(section)}
+                    onClick={() => handleSave(section as ContentKey)}
+                    disabled={isPending || !isDirty(section as ContentKey)}
                     className="flex items-center gap-2 px-5 py-2 rounded-xl bg-[#8B7D6B] text-white text-sm shadow-md hover:bg-[#7a6c5c] disabled:opacity-50"
                   >
                     {isPending && <Loader2 className="w-4 h-4 animate-spin" />}

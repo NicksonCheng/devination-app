@@ -76,5 +76,62 @@ export async function setNumerologyPassword(
     p_password: trimmed,
   });
   if (error) return { ok: false, error: error.message };
+
+  revalidatePath("/", "layout");
   return { ok: true };
+}
+
+/* ------------------------------------------------------------------ */
+/*  後台帳號管理                                                        */
+/* ------------------------------------------------------------------ */
+
+export interface AdminUser {
+  user_id: string;
+  email: string;
+  nickname: string | null;
+  phone: string | null;
+  birthdate: string | null;
+  created_at: string;
+  last_sign_in: string | null;
+  quiz_count: number;
+  is_admin: boolean;
+}
+
+export interface AdminHistoryRow {
+  id: string;
+  quiz_type: string;
+  result_data: Record<string, unknown>;
+  created_at: string;
+}
+
+export async function getAllUsers(): Promise<
+  { ok: true; users: AdminUser[] } | { ok: false; error: string }
+> {
+  if (!(await getIsAdmin())) return { ok: false, error: "沒有後台權限。" };
+
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("get_all_users_for_admin");
+  if (error) return { ok: false, error: error.message };
+
+  return {
+    ok: true,
+    users: (data as AdminUser[]).map((u) => ({
+      ...u,
+      quiz_count: Number(u.quiz_count),
+    })),
+  };
+}
+
+export async function getUserHistory(userId: string): Promise<
+  { ok: true; rows: AdminHistoryRow[] } | { ok: false; error: string }
+> {
+  if (!(await getIsAdmin())) return { ok: false, error: "沒有後台權限。" };
+
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("get_user_history_for_admin", {
+    p_user_id: userId,
+  });
+  if (error) return { ok: false, error: error.message };
+
+  return { ok: true, rows: data as AdminHistoryRow[] };
 }
