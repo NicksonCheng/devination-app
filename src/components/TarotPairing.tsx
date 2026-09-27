@@ -23,7 +23,7 @@ export default function TarotPairing() {
   const [result, setResult] = useState<PairResult | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const canAnalyze = signA && signB && signA !== signB;
+  const canAnalyze = signA && signB;
 
   const handleAnalyze = async () => {
     if (!canAnalyze) return;
@@ -90,7 +90,7 @@ export default function TarotPairing() {
                 我的星座…
               </option>
               {ZODIACS.map((z) => (
-                <option key={z.id} value={z.id} disabled={z.id === signB}>
+                <option key={z.id} value={z.id}>
                   {z.symbol} {z.name}
                 </option>
               ))}
@@ -117,7 +117,7 @@ export default function TarotPairing() {
                 他/她的星座…
               </option>
               {ZODIACS.map((z) => (
-                <option key={z.id} value={z.id} disabled={z.id === signA}>
+                <option key={z.id} value={z.id}>
                   {z.symbol} {z.name}
                 </option>
               ))}

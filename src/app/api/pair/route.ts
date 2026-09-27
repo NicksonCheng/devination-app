@@ -5,7 +5,7 @@ import { getFallbackPair, PairResult } from "@/lib/pairFallback";
 
 export async function POST(req: NextRequest) {
   const { signA, signB } = await req.json();
-  if (!signA || !signB || signA === signB) {
+  if (!signA || !signB) {
     return NextResponse.json({ error: "Invalid signs" }, { status: 400 });
   }
 
