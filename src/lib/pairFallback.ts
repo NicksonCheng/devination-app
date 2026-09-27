@@ -1,5 +1,4 @@
-import ZODIACS from "@/data/zodiacs.json";
-import PAIR_RESULTS_JSON from "@/data/pairResults.json";
+import type { Content } from "@/lib/content";
 
 export interface PairResult {
   title: string;
@@ -9,13 +8,17 @@ export interface PairResult {
   base: string;
 }
 
-const PAIR_RESULTS = PAIR_RESULTS_JSON as Record<string, PairResult>;
-
-export function getFallbackPair(a: string, b: string): PairResult {
+export function getFallbackPair(
+  a: string,
+  b: string,
+  zodiacs: Content["zodiacs"],
+  pairResults: Content["pairResults"],
+): PairResult {
+  const PAIR_RESULTS = pairResults as Record<string, PairResult>;
   const key1 = `${a}-${b}`;
   const key2 = `${b}-${a}`;
-  const zA = ZODIACS.find((z) => z.id === a);
-  const zB = ZODIACS.find((z) => z.id === b);
+  const zA = zodiacs.find((z) => z.id === a);
+  const zB = zodiacs.find((z) => z.id === b);
   return (
     PAIR_RESULTS[key1] ??
     PAIR_RESULTS[key2] ?? {

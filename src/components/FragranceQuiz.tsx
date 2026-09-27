@@ -4,7 +4,7 @@ import { useState } from "react";
 import { getFragranceProfile } from "@/app/actions/getFragranceProfile";
 import { saveQuizHistory } from "@/app/actions/saveQuizHistory";
 import type { FragranceProfile } from "@/lib/fragranceData";
-import QUESTIONS_DATA from "@/data/quizQuestions.json";
+import type { Content } from "@/lib/content";
 import { Sparkles, RotateCcw, Share2, FlaskConical } from "lucide-react";
 
 /* ------------------------------------------------------------------ */
@@ -23,15 +23,18 @@ interface Question {
   options: QuizOption[];
 }
 
-const QUESTIONS: Question[] = QUESTIONS_DATA as Question[];
-
 /* ------------------------------------------------------------------ */
 /*  Component                                                          */
 /* ------------------------------------------------------------------ */
 
 type Step = "intro" | "loading" | "result" | number; // number = 1-6
 
-export default function FragranceQuiz() {
+export default function FragranceQuiz({
+  questions,
+}: {
+  questions: Content["quizQuestions"];
+}) {
+  const QUESTIONS = questions as Question[];
   const [step, setStep] = useState<Step>("intro");
   const [answers, setAnswers] = useState<(number | null)[]>(
     Array(6).fill(null),

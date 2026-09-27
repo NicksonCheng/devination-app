@@ -8,10 +8,19 @@ import FragranceQuiz from "./FragranceQuiz";
 import NumerologyScent from "./NumerologyScent";
 import { createClient } from "@/utils/supabase/client";
 import type { User } from "@supabase/supabase-js";
+import type { Content } from "@/lib/content";
 
 export type Page = "home" | "tarot" | "quiz" | "numerology";
 
-export default function AppShell({ children }: { children?: React.ReactNode }) {
+interface AppShellProps {
+  content: Pick<
+    Content,
+    "energyPhrases" | "energyLink" | "zodiacs" | "quizQuestions"
+  >;
+  isAdmin: boolean;
+}
+
+export default function AppShell({ content, isAdmin }: AppShellProps) {
   const [user, setUser] = useState<User | null>(null);
   const [currentPage, setCurrentPage] = useState<Page>("home");
 
@@ -37,6 +46,7 @@ export default function AppShell({ children }: { children?: React.ReactNode }) {
       <div className="relative z-10 flex flex-col min-h-screen">
         <Navbar
           user={user}
+          isAdmin={isAdmin}
           currentPage={currentPage}
           onNavigate={setCurrentPage}
         />
@@ -44,12 +54,16 @@ export default function AppShell({ children }: { children?: React.ReactNode }) {
         <main className="flex-1">
           {currentPage === "home" && (
             <LandingPage
+              energyPhrases={content.energyPhrases}
+              energyLink={content.energyLink}
               onNavigateTarot={() => setCurrentPage("tarot")}
               onNavigateQuiz={() => setCurrentPage("quiz")}
             />
           )}
-          {currentPage === "tarot" && <TarotPairing />}
-          {currentPage === "quiz" && <FragranceQuiz />}
+          {currentPage === "tarot" && <TarotPairing zodiacs={content.zodiacs} />}
+          {currentPage === "quiz" && (
+            <FragranceQuiz questions={content.quizQuestions} />
+          )}
           {currentPage === "numerology" && <NumerologyScent />}
         </main>
 

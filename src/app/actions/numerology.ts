@@ -1,8 +1,7 @@
 "use server";
 
-import { createHash, timingSafeEqual } from "crypto";
 import { cookies } from "next/headers";
-import NUMEROLOGY_DATA from "@/data/numerology.json";
+import { getContent } from "@/lib/content";
 import { createClient } from "@/utils/supabase/server";
 import { saveQuizHistory } from "./saveQuizHistory";
 
@@ -20,31 +19,18 @@ export interface NumerologyResult {
   purchaseLink: string;
 }
 
-const DATA = NUMEROLOGY_DATA as Record<string, NumerologyResult>;
 const COOKIE_NAME = "numerology_access";
 const CURRENT_YEAR = 2026;
 
-// cookie 存的是密碼的雜湊，調香師更換密碼後舊的 cookie 會自動失效
-function hashPassword(password: string): string {
-  return createHash("sha256").update(`numerology:${password}`).digest("hex");
-}
-
-function expectedToken(): string | null {
-  const password = process.env.NUMEROLOGY_PASSWORD;
-  return password ? hashPassword(password) : null;
-}
-
-function safeEqual(a: string, b: string): boolean {
-  const bufA = Buffer.from(a);
-  const bufB = Buffer.from(b);
-  return bufA.length === bufB.length && timingSafeEqual(bufA, bufB);
-}
-
+// 密碼雜湊與 access token 存在 Supabase（見 db.sql），調香師在後台改密碼後 token 會更換，舊 cookie 自動失效
 async function hasAccess(): Promise<boolean> {
-  const expected = expectedToken();
-  if (!expected) return false;
   const token = (await cookies()).get(COOKIE_NAME)?.value;
-  return !!token && safeEqual(token, expected);
+  if (!token) return false;
+  const supabase = await createClient();
+  const { data } = await supabase.rpc("check_numerology_token", {
+    p_token: token,
+  });
+  return data === true;
 }
 
 export async function checkNumerologyAccess(): Promise<boolean> {
@@ -54,13 +40,17 @@ export async function checkNumerologyAccess(): Promise<boolean> {
 export async function unlockNumerology(
   password: string,
 ): Promise<{ ok: boolean; error?: string }> {
-  const expected = expectedToken();
-  if (!expected) {
+  const supabase = await createClient();
+
+  const { data: configured } = await supabase.rpc("has_numerology_password");
+  if (!configured) {
     return { ok: false, error: "此功能尚未開放，請洽詢調香師。" };
   }
 
-  const token = hashPassword(password.trim());
-  if (!safeEqual(token, expected)) {
+  const { data: token } = await supabase.rpc("verify_numerology_password", {
+    p_password: password.trim(),
+  });
+  if (typeof token !== "string" || !token) {
     return { ok: false, error: "密碼錯誤，請向調香師確認密碼。" };
   }
 
@@ -105,7 +95,11 @@ export async function getNumerologyResult(
     return { ok: false, error: "請輸入正確的出生年月日。" };
   }
 
-  const result = DATA[num] ?? DATA[1];
+  const data = (await getContent("numerology")) as Record<
+    string,
+    NumerologyResult
+  >;
+  const result = data[num] ?? data[1];
 
   await saveNumerologyHistory(birthdate, num, result);
 

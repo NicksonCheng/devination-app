@@ -1,6 +1,3 @@
-import mbtiScentMapData from "@/data/mbtiScentMap.json";
-import mbtiFallbacksData from "@/data/mbtiFallbacks.json";
-
 export interface FragranceProfile {
   title: string;
   personality_desc: string;
@@ -14,11 +11,6 @@ export interface ScentMapping {
   keywords: string[];
   ingredients: string[];
 }
-
-export const MBTI_SCENT_MAP: Record<string, ScentMapping> = mbtiScentMapData;
-
-export const FALLBACK_PROFILES: Record<string, FragranceProfile> =
-  mbtiFallbacksData as Record<string, FragranceProfile>;
 
 export function buildGenericFallback(
   mbti: string,

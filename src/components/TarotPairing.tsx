@@ -8,8 +8,8 @@ import {
   Sparkles,
   Loader2,
 } from "lucide-react";
-import ZODIACS from "@/data/zodiacs.json";
-import { getFallbackPair, PairResult } from "@/lib/pairFallback";
+import type { PairResult } from "@/lib/pairFallback";
+import type { Content } from "@/lib/content";
 import { saveQuizHistory } from "@/app/actions/saveQuizHistory";
 
 const selectClass =
@@ -17,7 +17,11 @@ const selectClass =
   "focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300 " +
   "hover:border-stone-300 transition-all duration-200 appearance-none cursor-pointer";
 
-export default function TarotPairing() {
+export default function TarotPairing({
+  zodiacs: ZODIACS,
+}: {
+  zodiacs: Content["zodiacs"];
+}) {
   const [signA, setSignA] = useState("");
   const [signB, setSignB] = useState("");
   const [result, setResult] = useState<PairResult | null>(null);

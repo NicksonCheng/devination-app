@@ -8,6 +8,7 @@ import {
   ChevronDown,
   BookOpen,
   UserCircle,
+  Settings,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useRef, useState, useTransition, useEffect } from "react";
@@ -17,11 +18,17 @@ import { createClient } from "@/utils/supabase/client";
 
 interface NavbarProps {
   user: SupabaseUser | null;
+  isAdmin: boolean;
   currentPage: Page;
   onNavigate: (page: Page) => void;
 }
 
-export default function Navbar({ user, currentPage, onNavigate }: NavbarProps) {
+export default function Navbar({
+  user,
+  isAdmin,
+  currentPage,
+  onNavigate,
+}: NavbarProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -149,6 +156,18 @@ export default function Navbar({ user, currentPage, onNavigate }: NavbarProps) {
                     <BookOpen className="w-4 h-4 text-amber-500" />
                     我的專屬紀錄
                   </button>
+                  {isAdmin && (
+                    <button
+                      onClick={() => {
+                        setDropdownOpen(false);
+                        router.push("/admin");
+                      }}
+                      className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-stone-600 hover:bg-amber-50 hover:text-amber-800 transition-colors"
+                    >
+                      <Settings className="w-4 h-4 text-amber-500" />
+                      調香師後台
+                    </button>
+                  )}
                   <div className="my-1 border-t border-stone-100" />
                   <button
                     onClick={handleLogout}

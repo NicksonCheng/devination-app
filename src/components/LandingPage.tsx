@@ -2,14 +2,17 @@
 
 import { useState } from "react";
 import { Sparkles, Wind, RefreshCw } from "lucide-react";
-import ENERGY_PHRASES from "@/data/energyPhrases.json";
 
 interface LandingPageProps {
+  energyPhrases: string[];
+  energyLink: string;
   onNavigateTarot: () => void;
   onNavigateQuiz: () => void;
 }
 
 export default function LandingPage({
+  energyPhrases: ENERGY_PHRASES,
+  energyLink,
   onNavigateTarot,
   onNavigateQuiz,
 }: LandingPageProps) {
@@ -141,12 +144,7 @@ export default function LandingPage({
           </p>
         </button>
         <button
-          onClick={() =>
-            window.open(
-              "https://myship.7-11.com.tw/general/detail/GM2603185975610",
-              "_blank",
-            )
-          }
+          onClick={() => window.open(energyLink, "_blank")}
           className="bg-white rounded-2xl p-6 text-center border border-stone-100 hover:border-amber-200 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 cursor-pointer"
         >
           <div className="text-3xl mb-2">✨</div>

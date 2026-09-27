@@ -3,15 +3,21 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import {
   type FragranceProfile,
-  MBTI_SCENT_MAP,
-  FALLBACK_PROFILES,
+  type ScentMapping,
   buildGenericFallback,
 } from "@/lib/fragranceData";
+import { getContents } from "@/lib/content";
 
 export async function getFragranceProfile(
   mbti: string,
 ): Promise<FragranceProfile> {
   const type = mbti.toUpperCase();
+  const content = await getContents(["mbtiScentMap", "mbtiFallbacks"]);
+  const MBTI_SCENT_MAP = content.mbtiScentMap as Record<string, ScentMapping>;
+  const FALLBACK_PROFILES = content.mbtiFallbacks as Record<
+    string,
+    FragranceProfile
+  >;
   const mapping = MBTI_SCENT_MAP[type];
 
   if (!mapping) {

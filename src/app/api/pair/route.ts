@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import zodiacsData from "@/data/zodiacs.json";
+import { getContents } from "@/lib/content";
 import { getFallbackPair, PairResult } from "@/lib/pairFallback";
 
 export async function POST(req: NextRequest) {
@@ -9,13 +9,20 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid signs" }, { status: 400 });
   }
 
+  const { zodiacs, pairResults } = await getContents([
+    "zodiacs",
+    "pairResults",
+  ]);
+  const fallback = () =>
+    NextResponse.json(getFallbackPair(signA, signB, zodiacs, pairResults));
+
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
-    return NextResponse.json(getFallbackPair(signA, signB));
+    return fallback();
   }
 
-  const zA = zodiacsData.find((z) => z.id === signA);
-  const zB = zodiacsData.find((z) => z.id === signB);
+  const zA = zodiacs.find((z) => z.id === signA);
+  const zB = zodiacs.find((z) => z.id === signB);
 
   const prompt = `你是一位精通星座學與香水調香的命理師。請為以下這對情侶星座組合，創作一份專屬的「命定香氛配對」報告。
 
@@ -75,11 +82,11 @@ export async function POST(req: NextRequest) {
 
     if (isRateLimit || isTimeout || err instanceof SyntaxError) {
       // Fallback: return the pre-defined fixed result
-      return NextResponse.json(getFallbackPair(signA, signB));
+      return fallback();
     }
 
     // Other unexpected errors — still fall back rather than surface a 500
     console.error("[/api/pair] Gemini error:", err);
-    return NextResponse.json(getFallbackPair(signA, signB));
+    return fallback();
   }
 }
