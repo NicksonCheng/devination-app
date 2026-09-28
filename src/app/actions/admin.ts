@@ -23,7 +23,7 @@ export async function saveContent(
   const shapeError = validateShape(value, CONTENT_DEFAULTS[key]);
   if (shapeError) return { ok: false, error: `格式錯誤：${shapeError}` };
 
-  if (key === "energyLink") {
+  if (key === "energyLink" || key === "scentExploreLink") {
     try {
       const url = new URL(value as string);
       if (url.protocol !== "https:" && url.protocol !== "http:") throw 0;
@@ -79,6 +79,52 @@ export async function setNumerologyPassword(
 
   revalidatePath("/", "layout");
   return { ok: true };
+}
+
+/* ------------------------------------------------------------------ */
+/*  主理人照片上傳                                                      */
+/* ------------------------------------------------------------------ */
+
+export async function uploadMasterPhoto(
+  formData: FormData,
+): Promise<{ ok: true; url: string } | { ok: false; error: string }> {
+  if (!(await getIsAdmin())) return { ok: false, error: "沒有後台權限。" };
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { ok: false, error: "未登入" };
+
+  const file = formData.get("photo") as File;
+  if (!(file instanceof File) || file.size === 0)
+    return { ok: false, error: "請選擇照片" };
+  if (file.size > 5 * 1024 * 1024)
+    return { ok: false, error: "照片大小不能超過 5MB" };
+  if (!file.type.startsWith("image/"))
+    return { ok: false, error: "請上傳圖片檔案" };
+
+  // 固定路徑 → 每次上傳自動覆蓋，避免累積舊檔案
+  const path = `${user.id}/photo`;
+
+  const { error: uploadError } = await supabase.storage
+    .from("master-photos")
+    .upload(path, file, { upsert: true, contentType: file.type });
+
+  if (uploadError) return { ok: false, error: uploadError.message };
+
+  const {
+    data: { publicUrl },
+  } = supabase.storage.from("master-photos").getPublicUrl(path);
+
+  // 加 timestamp 破除瀏覽器與 Next.js Image 快取，確保每次上傳後立即更新
+  const urlWithBust = `${publicUrl}?v=${Date.now()}`;
+
+  // 儲存 URL 到內容設定
+  const saveRes = await saveContent("masterPhotoUrl", urlWithBust);
+  if (!saveRes.ok) return { ok: false as const, error: saveRes.error };
+
+  return { ok: true, url: urlWithBust };
 }
 
 /* ------------------------------------------------------------------ */

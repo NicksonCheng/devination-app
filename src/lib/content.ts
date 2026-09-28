@@ -14,6 +14,10 @@ import zodiacs from "@/data/zodiacs.json";
 
 export const CONTENT_DEFAULTS = {
   energyLink: "https://myship.7-11.com.tw/general/detail/GM2603185975610",
+  scentExploreLink: "https://lin.ee/7rJDdKf",
+  masterPhotoUrl: "/master.jpg",
+  masterBio:
+    "10 年專業美容師 × KPIA 高級調香專業。長年透過雙手觸碰肌膚、傾聽身心狀態，我深刻明白：真正的療癒，源自於內在的平衡與流動。結合韓國 KPIA 進階調香專業，我將美容職人的細膩觀察帶入香氣創作，陪你從氣味裡認識當下的自己。在馥境，香氣是一種記憶，也是一種與自己相處的方式。",
   energyPhrases,
   quizQuestions,
   mbtiScentMap,
@@ -28,6 +32,9 @@ export type Content = typeof CONTENT_DEFAULTS;
 
 export const CONTENT_LABELS: Record<ContentKey, string> = {
   energyLink: "能量共鳴連結",
+  scentExploreLink: "探索香調連結",
+  masterPhotoUrl: "主理人照片網址",
+  masterBio: "主理人介紹",
   energyPhrases: "當日能量彩虹卡",
   quizQuestions: "香氛人格｜測驗題目",
   mbtiScentMap: "香氛人格｜MBTI 香調對應",

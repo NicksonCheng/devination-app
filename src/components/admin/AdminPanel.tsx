@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, useRef } from "react";
 import { useRouter } from "next/navigation";
 import {
   ArrowLeft,
@@ -14,6 +14,8 @@ import {
   Trash2,
   RotateCcw,
   Users,
+  Upload,
+  Image as ImageIcon,
 } from "lucide-react";
 import type { Content, ContentKey } from "@/lib/content";
 import type { AdminUser } from "@/app/actions/admin";
@@ -21,6 +23,7 @@ import {
   saveContent,
   resetContent,
   setNumerologyPassword,
+  uploadMasterPhoto,
 } from "@/app/actions/admin";
 import UsersPanel from "./UsersPanel";
 
@@ -248,6 +251,48 @@ function Collapsible({
   );
 }
 
+/* ────────────────── 上傳前壓縮 ────────────────── */
+
+async function compressImage(
+  file: File,
+  maxDim = 1200,
+  quality = 0.82,
+): Promise<File> {
+  return new Promise((resolve) => {
+    const img = new window.Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      let { width, height } = img;
+      if (width > maxDim || height > maxDim) {
+        const ratio = maxDim / Math.max(width, height);
+        width = Math.round(width * ratio);
+        height = Math.round(height * ratio);
+      }
+      const canvas = document.createElement("canvas");
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext("2d")!;
+      ctx.drawImage(img, 0, 0, width, height);
+      canvas.toBlob(
+        (blob) =>
+          resolve(
+            blob
+              ? new File([blob], "photo.jpg", { type: "image/jpeg" })
+              : file,
+          ),
+        "image/jpeg",
+        quality,
+      );
+    };
+    img.onerror = () => {
+      URL.revokeObjectURL(url);
+      resolve(file);
+    };
+    img.src = url;
+  });
+}
+
 /* ────────────────── Panel ────────────────── */
 
 export default function AdminPanel({
@@ -276,6 +321,8 @@ export default function AdminPanel({
   const [password, setPassword] = useState("");
   const [passwordSet, setPasswordSet] = useState(hasPassword);
   const [toast, setToast] = useState<Toast>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const photoInputRef = useRef<HTMLInputElement>(null);
 
   const showToast = (type: "success" | "error", message: string) => {
     setToast({ type, message });
@@ -329,6 +376,26 @@ export default function AdminPanel({
         showToast("error", res.error);
       }
     });
+  };
+
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setIsUploading(true);
+    const compressed = await compressImage(file);
+    const fd = new FormData();
+    fd.append("photo", compressed);
+    const res = await uploadMasterPhoto(fd);
+    setIsUploading(false);
+    if (e.target) e.target.value = "";
+    if (res.ok) {
+      setValues((v) => ({ ...v, masterPhotoUrl: res.url }));
+      setSaved((s) => ({ ...s, masterPhotoUrl: res.url }));
+      setCustomized((c) => new Set(c).add("masterPhotoUrl"));
+      showToast("success", "照片已上傳，網站即時更新 ✦");
+    } else {
+      showToast("error", res.error);
+    }
   };
 
   const contentKeys = Object.keys(labels) as ContentKey[];
@@ -454,15 +521,73 @@ export default function AdminPanel({
                   )}
                 </div>
 
-                <ValueEditor
-                  key={section}
-                  value={values[section as ContentKey]}
-                  path=""
-                  depth={0}
-                  onChange={(v) =>
-                    setValues((prev) => ({ ...prev, [section]: v }))
-                  }
-                />
+                {section === "masterPhotoUrl" && (
+                  <div className="bg-white border border-stone-200 rounded-2xl p-4 space-y-3">
+                    {/* 目前照片預覽 */}
+                    {values.masterPhotoUrl && (
+                      <div className="flex items-start gap-4">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={values.masterPhotoUrl}
+                          alt="主理人預覽"
+                          className="w-24 h-24 object-contain rounded-xl border border-stone-200 bg-stone-50"
+                        />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs text-stone-500 mb-1">目前照片</p>
+                          <p className="text-xs text-stone-400 truncate">{values.masterPhotoUrl}</p>
+                        </div>
+                      </div>
+                    )}
+                    {/* 上傳按鈕 */}
+                    <input
+                      ref={photoInputRef}
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={handlePhotoUpload}
+                    />
+                    <button
+                      type="button"
+                      disabled={isUploading}
+                      onClick={() => photoInputRef.current?.click()}
+                      className="flex items-center gap-2 px-4 py-2 rounded-xl border border-stone-200 bg-stone-50 hover:bg-amber-50 hover:border-amber-200 text-sm text-stone-600 hover:text-amber-700 transition-colors disabled:opacity-50"
+                    >
+                      {isUploading ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <Upload className="w-4 h-4" />
+                      )}
+                      {isUploading ? "上傳中…" : "上傳新照片（自動覆蓋舊檔）"}
+                    </button>
+                    <p className="text-xs text-stone-400">
+                      支援 JPG / PNG / WebP，最大 5MB。每個管理員帳號保留一張，上傳即覆蓋。
+                    </p>
+                    <div className="border-t border-stone-100 pt-3">
+                      <p className="text-xs text-stone-500 mb-1">或直接輸入網址</p>
+                      <ValueEditor
+                        key={section}
+                        value={values[section as ContentKey]}
+                        path=""
+                        depth={0}
+                        onChange={(v) =>
+                          setValues((prev) => ({ ...prev, masterPhotoUrl: v as string }))
+                        }
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {section !== "masterPhotoUrl" && (
+                  <ValueEditor
+                    key={section}
+                    value={values[section as ContentKey]}
+                    path=""
+                    depth={0}
+                    onChange={(v) =>
+                      setValues((prev) => ({ ...prev, [section]: v }))
+                    }
+                  />
+                )}
 
                 <div className="sticky bottom-4 flex justify-end gap-2">
                   {isDirty(section as ContentKey) && (

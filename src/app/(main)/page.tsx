@@ -7,7 +7,15 @@ export const dynamic = "force-dynamic";
 
 export default async function Home() {
   const [content, isAdmin] = await Promise.all([
-    getContents(["energyPhrases", "energyLink", "zodiacs", "quizQuestions"]),
+    getContents([
+      "energyPhrases",
+      "energyLink",
+      "scentExploreLink",
+      "masterPhotoUrl",
+      "masterBio",
+      "zodiacs",
+      "quizQuestions",
+    ]),
     getIsAdmin(),
   ]);
   return <AppShell content={content} isAdmin={isAdmin} />;
