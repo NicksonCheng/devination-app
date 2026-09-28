@@ -15,6 +15,7 @@ import { useRef, useState, useTransition, useEffect } from "react";
 import type { Page } from "./AppShell";
 import type { User as SupabaseUser } from "@supabase/supabase-js";
 import { createClient } from "@/utils/supabase/client";
+import { useLoading } from "@/components/LoadingContext";
 
 interface NavbarProps {
   user: SupabaseUser | null;
@@ -34,6 +35,7 @@ export default function Navbar({
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const isLoggedIn = !!user;
+  const { showLoading, hideLoading } = useLoading();
 
   const displayName =
     (user?.user_metadata?.nickname as string | undefined) ||
@@ -56,10 +58,12 @@ export default function Navbar({
 
   const handleLogout = () => {
     setDropdownOpen(false);
+    showLoading("登出中");
     startTransition(async () => {
       const supabase = createClient();
       await supabase.auth.signOut();
       router.refresh();
+      hideLoading();
     });
   };
 
@@ -139,6 +143,7 @@ export default function Navbar({
                   <button
                     onClick={() => {
                       setDropdownOpen(false);
+                      showLoading("前往個人資料");
                       router.push("/profile");
                     }}
                     className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-stone-600 hover:bg-amber-50 hover:text-amber-800 transition-colors"
@@ -149,6 +154,7 @@ export default function Navbar({
                   <button
                     onClick={() => {
                       setDropdownOpen(false);
+                      showLoading("前往香氛紀錄");
                       router.push("/history");
                     }}
                     className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-stone-600 hover:bg-amber-50 hover:text-amber-800 transition-colors"

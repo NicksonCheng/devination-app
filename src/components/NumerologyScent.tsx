@@ -8,18 +8,20 @@ import {
   getNumerologyResult,
   type NumerologyResult,
 } from "@/app/actions/numerology";
+import { useLoading } from "@/components/LoadingContext";
 
 /* ------------------------------------------------------------------ */
 /*  2026 流年靈數 × 香氣尋境（需調香師密碼）                              */
 /* ------------------------------------------------------------------ */
 
-type Step = "checking" | "locked" | "input" | "result";
+type Step = "checking" | "not_logged_in" | "locked" | "input" | "result";
 
 const ARCH = "rounded-t-[100px] rounded-b-[24px]";
 const BTN =
   "w-full bg-[#91634B] hover:bg-[#724a35] text-[#F1EAD8] font-serif py-3.5 rounded-xl shadow-sm tracking-wider text-sm transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed";
+// text-[16px] prevents iOS Safari from auto-zooming (< 16px triggers zoom → layout shift)
 const INPUT =
-  "w-full bg-[#F1EAD8] border border-[#A7A48F]/40 rounded-xl px-4 py-3 text-[#91634B] text-center focus:outline-none focus:border-[#91634B] transition text-sm";
+  "w-full bg-[#F1EAD8] border border-[#A7A48F]/40 rounded-xl px-4 py-3 text-[#91634B] text-center focus:outline-none focus:border-[#91634B] transition text-[16px] leading-normal";
 
 function BrandHeader() {
   return (
@@ -48,9 +50,19 @@ export default function NumerologyScent() {
   const [error, setError] = useState("");
   const [result, setResult] = useState<NumerologyResult | null>(null);
   const [isPending, startTransition] = useTransition();
+  const { showLoading, hideLoading } = useLoading();
 
   useEffect(() => {
-    checkNumerologyAccess().then((ok) => setStep(ok ? "input" : "locked"));
+    // AppShell shows loading before navigating here; update message and
+    // hide only after the access check finishes (self-managed loading page).
+    showLoading("驗證權限中");
+    checkNumerologyAccess().then((status) => {
+      if (status === "not_logged_in") setStep("not_logged_in");
+      else if (status === "ok") setStep("input");
+      else setStep("locked");
+      hideLoading();
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleUnlock = (e: React.FormEvent) => {
@@ -60,8 +72,10 @@ export default function NumerologyScent() {
       return;
     }
     setError("");
+    showLoading("驗證密碼中");
     startTransition(async () => {
       const res = await unlockNumerology(password);
+      hideLoading();
       if (res.ok) {
         setPassword("");
         setStep("input");
@@ -78,13 +92,14 @@ export default function NumerologyScent() {
       return;
     }
     setError("");
+    showLoading("尋境中");
     startTransition(async () => {
       const res = await getNumerologyResult(birthdate);
+      hideLoading();
       if (res.ok) {
         setResult(res.result);
         setStep("result");
       } else if (res.locked) {
-        // cookie 過期或調香師已更換密碼
         setStep("locked");
         setError(res.error);
       } else {
@@ -101,15 +116,35 @@ export default function NumerologyScent() {
 
   return (
     <div className="min-h-[calc(100vh-8rem)] bg-[#F1EAD8] text-[#91634B] flex items-center justify-center p-4">
-      {step === "checking" && (
-        <p className="text-sm text-[#A7A48F] font-serif">✦ 載入中 ✦</p>
+      {/* "checking" step: global LoadingScreen is shown instead */}
+      {step === "checking" && null}
+
+      {/* ================= 0. 未登入提示 ================= */}
+      {step === "not_logged_in" && (
+        <div className={`w-full max-w-md bg-[#EBE8E0] border border-[#A7A48F]/30 ${ARCH} p-6 sm:p-8 text-center shadow-sm`}>
+          <BrandHeader />
+          <p className="text-xs text-[#91634B]/80 mb-6 leading-relaxed">
+            此為馥境會員專屬體驗。
+            <br />
+            請先登入以探索你的 2026 流年香氣。
+          </p>
+          <a
+            href="/login"
+            className={BTN + " inline-block"}
+          >
+            ✦ 前往登入 ✦
+          </a>
+          <p className="text-[11px] text-[#A7A48F] italic mt-4">
+            「在自然與月光的陪伴下，屬於你的美麗由此展開。」
+          </p>
+        </div>
       )}
 
       {/* ================= 1. 密碼鎖 ================= */}
       {step === "locked" && (
         <form
           onSubmit={handleUnlock}
-          className={`w-full max-w-md bg-[#EBE8E0] border border-[#A7A48F]/30 ${ARCH} p-8 text-center shadow-sm`}
+          className={`w-full max-w-md bg-[#EBE8E0] border border-[#A7A48F]/30 ${ARCH} p-6 sm:p-8 text-center shadow-sm`}
         >
           <BrandHeader />
           <p className="text-xs text-[#91634B]/80 mb-6 leading-relaxed">
@@ -142,7 +177,7 @@ export default function NumerologyScent() {
       {step === "input" && (
         <form
           onSubmit={handleAnalyze}
-          className={`w-full max-w-md bg-[#EBE8E0] border border-[#A7A48F]/30 ${ARCH} p-8 text-center shadow-sm`}
+          className={`w-full max-w-md bg-[#EBE8E0] border border-[#A7A48F]/30 ${ARCH} p-6 sm:p-8 text-center shadow-sm`}
         >
           <BrandHeader />
           <p className="text-xs text-[#91634B]/80 mb-6 leading-relaxed">

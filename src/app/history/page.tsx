@@ -13,6 +13,7 @@ import {
   Moon,
   X,
 } from "lucide-react";
+import { useLoading } from "@/components/LoadingContext";
 
 interface HistoryRow {
   id: string;
@@ -274,6 +275,7 @@ function Section({
 
 export default function HistoryPage() {
   const router = useRouter();
+  const { showLoading, hideLoading } = useLoading();
   const [rows, setRows] = useState<HistoryRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -281,9 +283,11 @@ export default function HistoryPage() {
   const [activeTab, setActiveTab] = useState<QuizType>("personality_quiz");
 
   useEffect(() => {
+    showLoading("讀取香氛紀錄");
     const supabase = createClient();
     supabase.auth.getUser().then(async ({ data: { user } }) => {
       if (!user) {
+        hideLoading();
         router.replace("/login");
         return;
       }
@@ -293,6 +297,7 @@ export default function HistoryPage() {
         .select("id, quiz_type, result_data, created_at")
         .order("created_at", { ascending: false });
 
+      hideLoading();
       if (fetchError) {
         if (fetchError.message.includes("quiz_history")) {
           setRows([]);
@@ -304,6 +309,7 @@ export default function HistoryPage() {
       }
       setLoading(false);
     });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router]);
 
   const formatDate = (iso: string) => {

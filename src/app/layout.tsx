@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { LoadingProvider } from "@/components/LoadingContext";
 
 export const metadata: Metadata = {
   title: "命定香氣探索 | Soulmate Scent",
@@ -14,7 +15,7 @@ export default function RootLayout({
   return (
     <html lang="zh-TW">
       <body className="antialiased bg-[#0B1021] text-amber-100 min-h-screen">
-        {children}
+        <LoadingProvider>{children}</LoadingProvider>
       </body>
     </html>
   );

@@ -24,23 +24,34 @@ const CURRENT_YEAR = 2026;
 
 // 密碼雜湊與 access token 存在 Supabase（見 db.sql），調香師在後台改密碼後 token 會更換，舊 cookie 自動失效
 async function hasAccess(): Promise<boolean> {
+  const supabase = await createClient();
+  // 必須先登入才能使用此功能
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return false;
+
   const token = (await cookies()).get(COOKIE_NAME)?.value;
   if (!token) return false;
-  const supabase = await createClient();
   const { data } = await supabase.rpc("check_numerology_token", {
     p_token: token,
   });
   return data === true;
 }
 
-export async function checkNumerologyAccess(): Promise<boolean> {
-  return hasAccess();
+export async function checkNumerologyAccess(): Promise<"ok" | "locked" | "not_logged_in"> {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return "not_logged_in";
+  const ok = await hasAccess();
+  return ok ? "ok" : "locked";
 }
 
 export async function unlockNumerology(
   password: string,
 ): Promise<{ ok: boolean; error?: string }> {
   const supabase = await createClient();
+
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { ok: false, error: "請先登入再使用此功能。" };
 
   const { data: configured } = await supabase.rpc("has_numerology_password");
   if (!configured) {

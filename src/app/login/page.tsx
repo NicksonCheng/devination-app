@@ -18,6 +18,7 @@ import {
   Cake,
 } from "lucide-react";
 import { login, signup, signInWithOAuth } from "./actions";
+import { useLoading } from "@/components/LoadingContext";
 
 function OAuthButton({
   label,
@@ -74,6 +75,7 @@ function SubmitButton({ isLogin }: { isLogin: boolean }) {
 function LoginForm() {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const { showLoading } = useLoading();
 
   const initialMode =
     searchParams.get("mode") === "signup" ? "signup" : "login";
@@ -192,6 +194,7 @@ function LoginForm() {
           {/* Form */}
           <form
             action={isLogin ? login : signup}
+            onSubmit={() => showLoading(isLogin ? "登入中" : "建立帳號中")}
             className="relative space-y-5"
           >
             {/* Email */}
@@ -349,6 +352,7 @@ function LoginForm() {
           {/* OAuth buttons */}
           <form
             action={signInWithOAuth.bind(null, "google")}
+            onSubmit={() => showLoading("前往 Google 登入")}
             className="relative"
           >
             <OAuthButton

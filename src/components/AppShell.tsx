@@ -6,11 +6,22 @@ import LandingPage from "./LandingPage";
 import TarotPairing from "./TarotPairing";
 import FragranceQuiz from "./FragranceQuiz";
 import NumerologyScent from "./NumerologyScent";
+import { useLoading } from "./LoadingContext";
 import { createClient } from "@/utils/supabase/client";
 import type { User } from "@supabase/supabase-js";
 import type { Content } from "@/lib/content";
 
 export type Page = "home" | "tarot" | "quiz" | "numerology";
+
+const PAGE_LABELS: Record<Page, string> = {
+  home: "首頁",
+  tarot: "配對分析",
+  quiz: "香氛測驗",
+  numerology: "流年香氣",
+};
+
+// Numerology manages its own loading (async access check on mount)
+const SELF_MANAGED_LOADING = new Set<Page>(["numerology"]);
 
 interface AppShellProps {
   content: Pick<
@@ -29,6 +40,20 @@ interface AppShellProps {
 export default function AppShell({ content, isAdmin }: AppShellProps) {
   const [user, setUser] = useState<User | null>(null);
   const [currentPage, setCurrentPage] = useState<Page>("home");
+  const { showLoading, hideLoading } = useLoading();
+
+  const handleNavigate = (page: Page) => {
+    if (page === currentPage) return;
+    showLoading(`前往${PAGE_LABELS[page]}`);
+    setCurrentPage(page);
+    if (!SELF_MANAGED_LOADING.has(page)) {
+      // Hide after the new page has had two frames to render
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => hideLoading());
+      });
+    }
+    // Self-managed pages (numerology) call hideLoading themselves
+  };
 
   useEffect(() => {
     const supabase = createClient();
@@ -54,7 +79,7 @@ export default function AppShell({ content, isAdmin }: AppShellProps) {
           user={user}
           isAdmin={isAdmin}
           currentPage={currentPage}
-          onNavigate={setCurrentPage}
+          onNavigate={handleNavigate}
         />
 
         <main className="flex-1">

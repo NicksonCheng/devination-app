@@ -13,12 +13,14 @@ import {
   AlertCircle,
   Loader2,
 } from "lucide-react";
+import { useLoading } from "@/components/LoadingContext";
 
 type Toast = { type: "success" | "error"; message: string } | null;
 
 export default function ProfilePage() {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
+  const { showLoading, hideLoading } = useLoading();
 
   const [nickname, setNickname] = useState("");
   const [birthdate, setBirthdate] = useState("");
@@ -28,8 +30,10 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    showLoading("讀取個人資料");
     const supabase = createClient();
     supabase.auth.getUser().then(({ data: { user } }) => {
+      hideLoading();
       if (!user) {
         router.replace("/login");
         return;
@@ -40,6 +44,7 @@ export default function ProfilePage() {
       setPhone((user.user_metadata?.phone as string) ?? "");
       setLoading(false);
     });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router]);
 
   const showToast = (type: "success" | "error", message: string) => {
@@ -49,11 +54,13 @@ export default function ProfilePage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    showLoading("儲存中");
     startTransition(async () => {
       const supabase = createClient();
       const { error } = await supabase.auth.updateUser({
         data: { nickname: nickname.trim(), birthdate, phone: phone.trim() },
       });
+      hideLoading();
       if (error) {
         showToast("error", `更新失敗：${error.message}`);
       } else {

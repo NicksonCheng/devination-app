@@ -11,6 +11,7 @@ import {
 import type { PairResult } from "@/lib/pairFallback";
 import type { Content } from "@/lib/content";
 import { saveQuizHistory } from "@/app/actions/saveQuizHistory";
+import { useLoading } from "@/components/LoadingContext";
 
 const selectClass =
   "w-full py-3 px-4 rounded-2xl bg-stone-50 border border-stone-200 text-stone-700 text-sm " +
@@ -26,6 +27,7 @@ export default function TarotPairing({
   const [signB, setSignB] = useState("");
   const [result, setResult] = useState<PairResult | null>(null);
   const [loading, setLoading] = useState(false);
+  const { showLoading, hideLoading } = useLoading();
 
   const canAnalyze = signA && signB;
 
@@ -33,6 +35,7 @@ export default function TarotPairing({
     if (!canAnalyze) return;
     setLoading(true);
     setResult(null);
+    showLoading("命理師正在占卜");
     try {
       const res = await fetch("/api/pair", {
         method: "POST",
@@ -43,9 +46,10 @@ export default function TarotPairing({
       setResult(data);
       saveQuizHistory("fragrance_lab", { signA, signB, ...data });
     } catch {
-      //setResult(getFallbackPair(signA, signB));
+      // silent fallback
     } finally {
       setLoading(false);
+      hideLoading();
     }
   };
 

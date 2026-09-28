@@ -6,6 +6,7 @@ import { saveQuizHistory } from "@/app/actions/saveQuizHistory";
 import type { FragranceProfile } from "@/lib/fragranceData";
 import type { Content } from "@/lib/content";
 import { Sparkles, RotateCcw, Share2, FlaskConical } from "lucide-react";
+import { useLoading } from "@/components/LoadingContext";
 
 /* ------------------------------------------------------------------ */
 /*  MBTI scoring types & quiz data                                     */
@@ -41,6 +42,7 @@ export default function FragranceQuiz({
   );
   const [result, setResult] = useState<FragranceProfile | null>(null);
   const [mbtiType, setMbtiType] = useState("");
+  const { showLoading, hideLoading } = useLoading();
 
   /* helpers */
   const selectOption = (optionIndex: number) => {
@@ -80,9 +82,11 @@ export default function FragranceQuiz({
       setStep("loading");
       const mbti = calculateMbti();
       setMbtiType(mbti);
+      showLoading("萃取你的香氛氣質");
       const profile = await getFragranceProfile(mbti);
       setResult(profile);
       saveQuizHistory("personality_quiz", { mbti, ...profile });
+      hideLoading();
       setStep("result");
     }
   };
